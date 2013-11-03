@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Battlezeppelins.Global" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Battlezeppelins.MvcApplication" Language="C#" %>
