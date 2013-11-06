@@ -14,26 +14,48 @@ namespace Battlezeppelins.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
+            string registrationName = Request.Form["registrationName"];
 
-            int? id = null;
+            if (registrationName != null)
+            {
+                Register(registrationName);
+            }
+
+            Player player = null;
+
             if (Request.Cookies["userInfo"] != null)
             {
                 string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
-                id = Int32.Parse(idStr);
+                int? id = Int32.Parse(idStr);
+                player = new Player(id);
             }
 
-            BattlezUser user = new BattlezUser(id);
-
-            if (!user.exists)
+            if (player == null)
             {
                 Response.Cookies["userInfo"].Expires = DateTime.Now.AddDays(-1d);
             }
 
-            Response.Cookies["userInfo"]["id"] = "1";
-            Response.Cookies["userInfo"].Expires = DateTime.MaxValue;
+            return View(player);
+        }
 
-            return View(user);
+        public void Register(string registrationName)
+        {
+            int? id = null;
+
+            try
+            {
+                id = Player.Register(registrationName);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message + "\n";
+            }
+
+            if (id != null)
+            {
+                Response.Cookies["userInfo"]["id"] = id.ToString();
+                Response.Cookies["userInfo"].Expires = DateTime.MaxValue;
+            }
         }
 
         public ActionResult About()
