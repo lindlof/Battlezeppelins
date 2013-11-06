@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Battlezeppelins.Models;
 using MySql.Data.MySqlClient;
 
 namespace Battlezeppelins.Controllers
@@ -14,30 +16,24 @@ namespace Battlezeppelins.Controllers
         {
             ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
 
-            MySqlConnection conn = new MySqlConnection(
-                ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
-            try
+            int? id = null;
+            if (Request.Cookies["userInfo"] != null)
             {
-                conn.Open();
-
-                string sql = "SELECT name FROM battlezeppelins.player WHERE id='1'";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-
-                while (rdr.Read())
-                {
-                    @ViewBag.playerName = rdr[0];
-                }
-                rdr.Close();
+                string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
+                id = Int32.Parse(idStr);
             }
-            catch (Exception ex)
+
+            BattlezUser user = new BattlezUser(id);
+
+            if (!user.exists)
             {
-                Console.WriteLine(ex.ToString());
+                Response.Cookies["userInfo"].Expires = DateTime.Now.AddDays(-1d);
             }
-            conn.Close();
-            Console.WriteLine("Done.");
 
-            return View();
+            Response.Cookies["userInfo"]["id"] = "1";
+            Response.Cookies["userInfo"].Expires = DateTime.MaxValue;
+
+            return View(user);
         }
 
         public ActionResult About()

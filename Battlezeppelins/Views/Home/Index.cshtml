@@ -1,4 +1,9 @@
-﻿@{
+﻿@model Battlezeppelins.Models.BattlezUser
+@{
+    var exists = Model.exists;
+    var userName = Model.name;
+}
+@{
     ViewBag.Title = "Home Page";
 }
 @section featured {
@@ -9,7 +14,8 @@
                 <h2>@ViewBag.Message</h2>
             </hgroup>
             <p>
-                Hello @ViewBag.playerName
+                Hello @userName
+                Exists: @exists
             </p>
         </div>
     </section>
