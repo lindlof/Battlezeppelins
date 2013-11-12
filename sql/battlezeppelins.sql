@@ -11,7 +11,8 @@ USE `battlezeppelins` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `battlezeppelins`.`Player` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `lastSeen` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC))
 ENGINE = InnoDB;

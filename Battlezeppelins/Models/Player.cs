@@ -11,8 +11,11 @@ namespace Battlezeppelins.Models
     {
         public string name { get; set; }
 
+        private int? id { get; set; }
+
         public Player(int? id)
         {
+            this.id = id;
             name = null;
 
             if (id != null)
@@ -24,8 +27,8 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "SELECT name FROM battlezeppelins.player WHERE id = @ParamId";
-                    myCommand.Parameters.AddWithValue("@ParamId", id);
+                    myCommand.CommandText = "SELECT name FROM battlezeppelins.player WHERE id = @id";
+                    myCommand.Parameters.AddWithValue("@id", id);
                     using (MySqlDataReader reader = myCommand.ExecuteReader())
                     {
                         if (reader.Read())
@@ -42,6 +45,26 @@ namespace Battlezeppelins.Models
                 {
                     conn.Close();
                 }
+            }
+        }
+
+        public void StatusUpdate()
+        {
+            MySqlConnection conn = new MySqlConnection(
+            ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+
+            try
+            {
+                myCommand.CommandText = "UPDATE battlezeppelins.player SET lastSeen=@lastSeen where id=@id";
+                myCommand.Parameters.AddWithValue("@lastSeen", DateTime.Now);
+                myCommand.Parameters.AddWithValue("@id", this.id);
+                myCommand.ExecuteNonQuery();
+            }
+            finally
+            {
+                conn.Close();
             }
         }
 
@@ -62,12 +85,13 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "INSERT INTO battlezeppelins.player (name) VALUES (@ParamName)";
-                    myCommand.Parameters.AddWithValue("@ParamName", userName);
+                    myCommand.CommandText = "INSERT INTO battlezeppelins.player (name, lastSeen) VALUES (@name, @lastSeen)";
+                    myCommand.Parameters.AddWithValue("@name", userName);
+                    myCommand.Parameters.AddWithValue("@lastSeen", DateTime.Now);
                     myCommand.ExecuteNonQuery();
 
 
-                    myCommand.CommandText = "SELECT id FROM battlezeppelins.player WHERE name = @ParamName";
+                    myCommand.CommandText = "SELECT id FROM battlezeppelins.player WHERE name = @name";
                     using (MySqlDataReader reader = myCommand.ExecuteReader())
                     {
                         if (reader.Read())
@@ -85,7 +109,7 @@ namespace Battlezeppelins.Models
                     }
                     else
                     {
-                        throw new Exception("MySql error " + ex.Number);
+                        throw new Exception("MySql error " + ex.Number + ": " + ex.Message);
                     }
                 }
                 finally

@@ -34,6 +34,10 @@ namespace Battlezeppelins.Controllers
             {
                 Response.Cookies["userInfo"].Expires = DateTime.Now.AddDays(-1d);
             }
+            else
+            {
+                player.StatusUpdate();
+            }
 
             return View(player);
         }
