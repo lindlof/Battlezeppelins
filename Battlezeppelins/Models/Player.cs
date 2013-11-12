@@ -132,9 +132,8 @@ namespace Battlezeppelins.Models
 
             try
             {
-                myCommand.CommandText = "SELECT name FROM battlezeppelins.player WHERE TIMESTAMPDIFF(SECOND, @dateTime, player.lastSeen) < @timeLimit";
+                myCommand.CommandText = "SELECT name FROM battlezeppelins.player WHERE TIMESTAMPDIFF(SECOND, player.lastSeen, @dateTime) < 600";
                 myCommand.Parameters.AddWithValue("@dateTime", DateTime.Now);
-                myCommand.Parameters.AddWithValue("@timeLimit", new TimeSpan(0, 10, 0));
                 using (MySqlDataReader reader = myCommand.ExecuteReader())
                 {
                     while (reader.Read())
