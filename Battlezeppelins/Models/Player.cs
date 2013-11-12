@@ -120,5 +120,36 @@ namespace Battlezeppelins.Models
 
             return id;
         }
+
+        public static IEnumerable<string> GetActivePlayers()
+        {
+            List<string> activePlayers = new List<string>();
+
+            MySqlConnection conn = new MySqlConnection(
+            ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+
+            try
+            {
+                myCommand.CommandText = "SELECT name FROM battlezeppelins.player WHERE TIMESTAMPDIFF(SECOND, @dateTime, player.lastSeen) < @timeLimit";
+                myCommand.Parameters.AddWithValue("@dateTime", DateTime.Now);
+                myCommand.Parameters.AddWithValue("@timeLimit", new TimeSpan(0, 10, 0));
+                using (MySqlDataReader reader = myCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string name = reader.GetString(reader.GetOrdinal("name"));
+                        activePlayers.Add(name);
+                    }
+                }
+            }
+            finally
+            {
+                conn.Close();
+            }
+            activePlayers.Add("Hippo");
+            return activePlayers;
+        }
     }
 }

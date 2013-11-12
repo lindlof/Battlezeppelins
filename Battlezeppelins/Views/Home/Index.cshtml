@@ -1,7 +1,7 @@
-﻿@model Battlezeppelins.Models.Player
+﻿@model Battlezeppelins.Models.PlayerData
 @{
-    var userExists = Model != null;
-    var userName = userExists ? Model.name : "";
+    var userExists = Model.player != null;
+    var userName = userExists ? Model.player.name : "<You don't exist>";
 }
 @{
     ViewBag.Title = "Battle Area";
@@ -33,4 +33,6 @@
     } else {
         <p>Hello @userName</p>
     }
+
+    @Html.Partial("UserList")
 </div>
