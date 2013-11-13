@@ -39,7 +39,7 @@ namespace Battlezeppelins.Controllers
                 player.StatusUpdate();
             }
 
-            PlayerData playerData = new PlayerData();
+            Data playerData = new Data();
             playerData.player = player;
             playerData.activePlayers = Player.GetActivePlayers();
 

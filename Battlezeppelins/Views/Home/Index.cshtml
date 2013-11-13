@@ -1,9 +1,7 @@
-﻿@model Battlezeppelins.Models.PlayerData
+﻿@model Battlezeppelins.Models.Data
 @{
     var userExists = Model.player != null;
     var userName = userExists ? Model.player.name : "<You don't exist>";
-}
-@{
     ViewBag.Title = "Battle Area";
 }
 @section featured {

@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace Battlezeppelins.Models
 {
-    public class PlayerData
+    public class Data
     {
         public Player player { get; set; }
         public IEnumerable<string> activePlayers { get; set; }
