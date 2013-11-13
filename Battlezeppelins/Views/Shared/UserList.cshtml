@@ -18,7 +18,14 @@
             url: "Request/BattleChallenge",
             data: { challengeeSelected: challengee },
             success: function (data) {
-                alert("Challenge sent to " + challengee);
+                alert(data);
+            },
+            error: function (request, status, error) {
+                alert(request.statusText);
+                var r = jQuery.parseJSON(request.responseText);
+                alert("Message: " + r.Message);
+                alert("StackTrace: " + r.StackTrace);
+                alert("ExceptionType: " + r.ExceptionType);
             }
         });
     };

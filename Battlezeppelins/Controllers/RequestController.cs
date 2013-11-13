@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Net.Http;
 using Battlezeppelins.Models;
+using System.Net;
+using System.Web.Http;
 
 namespace Battlezeppelins.Controllers
 {
@@ -11,6 +14,7 @@ namespace Battlezeppelins.Controllers
     {
         public ActionResult BattleChallenge()
         {
+            string message = "";
             Player challenger = null;
             Player challengee = null;
 
@@ -30,10 +34,23 @@ namespace Battlezeppelins.Controllers
 
             if (challenger != null && challengee != null)
             {
-                Challenge.AddChallenge(challenger, challengee);
+                try
+                {
+                    Challenge.AddChallenge(challenger, challengee);
+                    message = "Challenge sent to " + challengee.name;
+                }
+                catch (Exception e)
+                {
+                    message = e.Message;
+                }
+            }
+            else
+            {
+                if (challenger == null) message += "Can't identify you. ";
+                if (challengee == null) message += "Can't identify challenged player. ";
             }
 
-            return null;
+            return Json(message, JsonRequestBehavior.AllowGet);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Battlezeppelins.Models
             {
                 if (ex.Number == 1062)
                 {
-                    throw new Exception("Username already taken", ex);
+                    throw new Exception("Challenge already in progress", ex);
                 }
                 else
                 {
