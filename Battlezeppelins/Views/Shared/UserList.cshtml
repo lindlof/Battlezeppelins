@@ -1,8 +1,25 @@
 ﻿@model Battlezeppelins.Models.Data
 <h3>Player list</h3>
-<select id="playerSelect" size="4" multiple>
-@foreach (var item in Model.activePlayers)
-{
-    <option>@item</option>
-}
-</select>
+<form id="BattleChallenge">
+    <select id="challengeeSelect" size="4" multiple>
+    @foreach (var item in Model.activePlayers)
+    {
+        <option>@item</option>
+    }
+    </select>
+    <input type="button" onclick="sendChallenge()" value="Challenge" />
+</form>
+<script>
+    function sendChallenge() {
+        var e = document.getElementById("challengeeSelect");
+        var challengee = e.options[e.selectedIndex].text;
+        $.ajax({
+            type: "POST",
+            url: "Request/BattleChallenge",
+            data: { challengeeSelected: challengee },
+            success: function (data) {
+                alert("Challenge sent to " + challengee);
+            }
+        });
+    };
+</script>
