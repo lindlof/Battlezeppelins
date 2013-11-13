@@ -10,8 +10,7 @@ namespace Battlezeppelins.Models
     public class Player
     {
         public string name { get; set; }
-
-        private int? id { get; set; }
+        public int? id { get; set; }
 
         public Player(int? id)
         {
@@ -37,9 +36,36 @@ namespace Battlezeppelins.Models
                         }
                     }
                 }
-                catch (Exception ex)
+                finally
                 {
-                    throw new Exception(ex.ToString(), ex);
+                    conn.Close();
+                }
+            }
+        }
+
+        public Player(string name)
+        {
+            this.name = name;
+            id = null;
+
+            if (name != null)
+            {
+                MySqlConnection conn = new MySqlConnection(
+                ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+                MySqlCommand myCommand = conn.CreateCommand();
+                conn.Open();
+
+                try
+                {
+                    myCommand.CommandText = "SELECT id FROM battlezeppelins.player WHERE name = @name";
+                    myCommand.Parameters.AddWithValue("@name", name);
+                    using (MySqlDataReader reader = myCommand.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            this.id = reader.GetInt32(reader.GetOrdinal("id"));
+                        }
+                    }
                 }
                 finally
                 {

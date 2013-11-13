@@ -11,20 +11,26 @@ namespace Battlezeppelins.Controllers
     {
         public ActionResult BattleChallenge()
         {
-            Player player = null;
+            Player challenger = null;
+            Player challengee = null;
 
             if (Request.Cookies["userInfo"] != null)
             {
                 string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
                 int? id = Int32.Parse(idStr);
-                player = new Player(id);
+                challenger = new Player(id);
             }
 
             string challengeeName = Request.Form["challengeeSelected"];
 
             if (challengeeName != null)
             {
-                
+                challengee = new Player(challengeeName);
+            }
+
+            if (challenger != null && challengee != null)
+            {
+                Challenge.AddChallenge(challenger, challengee);
             }
 
             return null;

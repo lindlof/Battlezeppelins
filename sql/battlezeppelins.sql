@@ -27,6 +27,29 @@ CREATE TABLE IF NOT EXISTS `battlezeppelins`.`Game` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `battlezeppelins`.`GameChallenge`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `battlezeppelins`.`GameChallenge` (
+  `challenger` INT UNSIGNED NOT NULL,
+  `challengee` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`challenger`),
+  INDEX `fk_player_id_2_idx` (`challengee` ASC),
+  UNIQUE INDEX `challenger_UNIQUE` (`challenger` ASC),
+  UNIQUE INDEX `challengee_UNIQUE` (`challengee` ASC),
+  CONSTRAINT `fk_player_id_1`
+    FOREIGN KEY (`challenger`)
+    REFERENCES `battlezeppelins`.`Player` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE RESTRICT,
+  CONSTRAINT `fk_player_id_2`
+    FOREIGN KEY (`challengee`)
+    REFERENCES `battlezeppelins`.`Player` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE RESTRICT)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
