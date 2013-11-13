@@ -1,0 +1,9 @@
+﻿<p id="challengeInbox"></p>
+<script>
+    var poller = window.setInterval(function () {
+        $.getJSON('@Url.Content("~/Poll/ChallengeInbox")', function (data) {
+            var div = document.getElementById("challengeInbox");
+            div.textContent = data;
+        });
+    }, 5000);
+</script>

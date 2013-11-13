@@ -39,5 +39,37 @@ namespace Battlezeppelins.Models
                 conn.Close();
             }
         }
+
+        public static Player RetrieveChallenge(Player challengee)
+        {
+            if (challengee != null)
+            {
+                MySqlConnection conn = new MySqlConnection(
+                ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+                MySqlCommand myCommand = conn.CreateCommand();
+                conn.Open();
+
+                try
+                {
+                    myCommand.CommandText = "SELECT challenger FROM battlezeppelins.gamechallenge WHERE challengee = @id";
+                    myCommand.Parameters.AddWithValue("@id", challengee.id);
+                    using (MySqlDataReader reader = myCommand.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            string name = reader.GetString(reader.GetOrdinal("challenger"));
+                            int? id = Int32.Parse(name);
+                            return new Player(id);
+                        }
+                    }
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+
+            return null;
+        }
     }
 }

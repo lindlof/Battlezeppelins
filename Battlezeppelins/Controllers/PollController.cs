@@ -22,13 +22,25 @@ namespace Battlezeppelins.Controllers
 
             return Json(false, JsonRequestBehavior.AllowGet);
         }
-        /*
-        public ActionResult ActivePlayers()
+        
+        public ActionResult ChallengeInbox()
         {
-            Data data = new Data();
-            data.activePlayers = Player.GetActivePlayers();
+            if (Request.Cookies["userInfo"] != null)
+            {
+                string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
+                int? id = Int32.Parse(idStr);
+                Player player = new Player(id);
 
-            return Json(data, JsonRequestBehavior.AllowGet);
-        }*/
+                Player challenger = Challenge.RetrieveChallenge(player);
+
+                if (challenger != null)
+                {
+                    string message = challenger.name + "wants to challenge you";
+                    return Json(message, JsonRequestBehavior.AllowGet);
+                }
+            }
+
+            return null;
+        }
     }
 }
