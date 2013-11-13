@@ -1,4 +1,9 @@
 ﻿<!DOCTYPE html>
+<script>
+var poller = window.setInterval(function () {
+    $.getJSON('@Url.Content("~/Poll/UpdateLastSeen")', function (data) { });
+}, 60000);
+</script>
 <html lang="en">
     <head>
         <meta charset="utf-8" />

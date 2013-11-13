@@ -1,0 +1,8 @@
+﻿@model Battlezeppelins.Models.Data
+<h3>Player list</h3>
+<select id="playerSelect" size="4" multiple>
+@foreach (var item in Model.activePlayers)
+{
+    <option>@item</option>
+}
+</select>
