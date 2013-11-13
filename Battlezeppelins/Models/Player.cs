@@ -173,7 +173,7 @@ namespace Battlezeppelins.Models
             {
                 conn.Close();
             }
-            activePlayers.Add("Hippo");
+
             return activePlayers;
         }
     }
