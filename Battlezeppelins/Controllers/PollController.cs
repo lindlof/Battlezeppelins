@@ -35,7 +35,7 @@ namespace Battlezeppelins.Controllers
 
                 if (challenger != null)
                 {
-                    string message = challenger.name + "wants to challenge you";
+                    string message = challenger.name + " wants to challenge you";
                     return Json(message, JsonRequestBehavior.AllowGet);
                 }
             }
