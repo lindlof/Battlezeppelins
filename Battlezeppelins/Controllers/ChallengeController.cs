@@ -10,7 +10,7 @@ using System.Web.Http;
 
 namespace Battlezeppelins.Controllers
 {
-    public class RequestController : Controller
+    public class ChallengeController : Controller
     {
         public ActionResult BattleChallenge()
         {
@@ -52,5 +52,24 @@ namespace Battlezeppelins.Controllers
 
             return Json(message, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult BattleAnswer()
+        {
+            Player challengee = null;
+            string playerAcceptsStr = Request.Form["PlayerAccepts"];
+            bool playerAccepts = Boolean.Parse(playerAcceptsStr);
+
+            if (Request.Cookies["userInfo"] != null)
+            {
+                string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
+                int? id = Int32.Parse(idStr);
+                challengee = new Player(id);
+            }
+
+            Challenge.RemoveChallenge(challengee);
+
+            return null;
+        }
+        
     }
 }

@@ -1,9 +1,40 @@
-﻿<p id="challengeInbox"></p>
+﻿<div id="challengeInbox" style="display: none;">
+    <p id="challengeText"></p>
+    <input type="button" onclick="acceptChallenge()" value="Accept" />
+    <input type="button" onclick="rejectChallenge()" value="Reject" />
+</div>
 <script>
-    var poller = window.setInterval(function () {
+    function pollChallengeInbox() {
         $.getJSON('@Url.Content("~/Poll/ChallengeInbox")', function (data) {
             var div = document.getElementById("challengeInbox");
-            div.textContent = data;
+            var text = document.getElementById("challengeText");
+            if (data.challenged) {
+                text.textContent = "Challenge from " + data.challenger;
+                div.style = "display: inline-block;";
+            } else {
+                div.style = "display: none;";
+            }
         });
-    }, 5000);
+    }
+    var challengePoller = window.setInterval(pollChallengeInbox, 5000);
+    pollChallengeInbox();
+
+    function acceptChallenge() {
+        answer(true);
+    };
+
+    function rejectChallenge() {
+        answer(false);
+    };
+
+    function answer(accepted) {
+        $.ajax({
+            type: "POST",
+            url: "Challenge/BattleAnswer",
+            data: { PlayerAccepts: accepted },
+            success: function (data) {
+                pollChallengeInbox();
+            }
+        });
+    }
 </script>
