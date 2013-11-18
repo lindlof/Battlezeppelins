@@ -72,9 +72,9 @@ namespace Battlezeppelins.Models
             return null;
         }
 
-        public static void RemoveChallenge(Player challengee)
+        public static void RemoveChallenge(bool challenger, Player player)
         {
-            if (challengee != null)
+            if (player != null)
             {
                 MySqlConnection conn = new MySqlConnection(
                 ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
@@ -83,8 +83,9 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "DELETE FROM battlezeppelins.gamechallenge WHERE challengee = @id";
-                    myCommand.Parameters.AddWithValue("@id", challengee.id);
+                    myCommand.CommandText = "DELETE FROM battlezeppelins.gamechallenge WHERE " + 
+                        (challenger ? "challenger" : "challengee") + " = @id";
+                    myCommand.Parameters.AddWithValue("@id", player.id);
                     myCommand.ExecuteNonQuery();
                 }
                 finally
