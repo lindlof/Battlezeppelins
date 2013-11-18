@@ -71,5 +71,27 @@ namespace Battlezeppelins.Models
 
             return null;
         }
+
+        public static void RemoveChallenge(Player challengee)
+        {
+            if (challengee != null)
+            {
+                MySqlConnection conn = new MySqlConnection(
+                ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+                MySqlCommand myCommand = conn.CreateCommand();
+                conn.Open();
+
+                try
+                {
+                    myCommand.CommandText = "DELETE FROM battlezeppelins.gamechallenge WHERE challengee = @id";
+                    myCommand.Parameters.AddWithValue("@id", challengee.id);
+                    myCommand.ExecuteNonQuery();
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
     }
 }

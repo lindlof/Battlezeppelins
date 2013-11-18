@@ -15,7 +15,7 @@
         var challengee = e.options[e.selectedIndex].text;
         $.ajax({
             type: "POST",
-            url: "Request/BattleChallenge",
+            url: "Challenge/BattleChallenge",
             data: { challengeeSelected: challengee },
             success: function (data) {
                 alert(data);
