@@ -10,9 +10,9 @@
             var text = document.getElementById("challengeText");
             if (data.challenged) {
                 text.textContent = "Challenge from " + data.challenger;
-                div.style = "display: inline-block;";
+                div.style.display = "inline-block";
             } else {
-                div.style = "display: none;";
+                div.style.display = "none";
             }
         });
     }
