@@ -36,6 +36,7 @@ namespace Battlezeppelins.Controllers
             {
                 try
                 {
+                    Challenge.RemoveChallenge(true, challenger);
                     Challenge.AddChallenge(challenger, challengee);
                     message = "Challenge sent to " + challengee.name;
                 }
@@ -53,6 +54,10 @@ namespace Battlezeppelins.Controllers
             return Json(message, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Run when player accepts or rejects a challenge
+        /// </summary>
+        /// <returns></returns>
         public ActionResult BattleAnswer()
         {
             Player challengee = null;
@@ -66,7 +71,12 @@ namespace Battlezeppelins.Controllers
                 challengee = new Player(id);
             }
 
-            Challenge.RemoveChallenge(challengee);
+            Challenge.RemoveChallenge(false, challengee);
+            if (playerAccepts)
+            {
+                // Also remove challenges issued by challengee
+                Challenge.RemoveChallenge(true, challengee);
+            }
 
             return null;
         }
