@@ -7,15 +7,13 @@ using Battlezeppelins.Models;
 
 namespace Battlezeppelins.Controllers
 {
-    public class PollController : Controller
+    public class PollController : BaseController
     {
         public ActionResult UpdateLastSeen()
         {
             if (Request.Cookies["userInfo"] != null)
             {
-                string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
-                int? id = Int32.Parse(idStr);
-                Player player = new Player(id);
+                Player player = base.GetPlayer();
                 player.StatusUpdate();
                 return Json(true, JsonRequestBehavior.AllowGet);
             }
@@ -27,10 +25,7 @@ namespace Battlezeppelins.Controllers
         {
             if (Request.Cookies["userInfo"] != null)
             {
-                string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
-                int? id = Int32.Parse(idStr);
-                Player player = new Player(id);
-
+                Player player = base.GetPlayer();
                 Player challenger = Challenge.RetrieveChallenge(player);
 
                 if (challenger != null)

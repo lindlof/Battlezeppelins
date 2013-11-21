@@ -10,20 +10,13 @@ using System.Web.Http;
 
 namespace Battlezeppelins.Controllers
 {
-    public class ChallengeController : Controller
+    public class ChallengeController : BaseController
     {
         public ActionResult BattleChallenge()
         {
             string message = "";
-            Player challenger = null;
+            Player challenger = base.GetPlayer();
             Player challengee = null;
-
-            if (Request.Cookies["userInfo"] != null)
-            {
-                string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
-                int? id = Int32.Parse(idStr);
-                challenger = new Player(id);
-            }
 
             string challengeeName = Request.Form["challengeeSelected"];
 
@@ -60,22 +53,18 @@ namespace Battlezeppelins.Controllers
         /// <returns></returns>
         public ActionResult BattleAnswer()
         {
-            Player challengee = null;
+            Player challengee = base.GetPlayer();
             string playerAcceptsStr = Request.Form["PlayerAccepts"];
             bool playerAccepts = Boolean.Parse(playerAcceptsStr);
-
-            if (Request.Cookies["userInfo"] != null)
-            {
-                string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
-                int? id = Int32.Parse(idStr);
-                challengee = new Player(id);
-            }
+            Player challenger = Challenge.RetrieveChallenge(challengee);
 
             Challenge.RemoveChallenge(false, challengee);
             if (playerAccepts)
             {
                 // Also remove challenges issued by challengee
                 Challenge.RemoveChallenge(true, challengee);
+
+                Game.Register(challenger, challengee);
             }
 
             return null;

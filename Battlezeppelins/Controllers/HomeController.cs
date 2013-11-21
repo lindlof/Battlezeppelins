@@ -10,7 +10,7 @@ using MySql.Data.MySqlClient;
 
 namespace Battlezeppelins.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public ActionResult Index()
         {
@@ -21,14 +21,7 @@ namespace Battlezeppelins.Controllers
                 Register(registrationName);
             }
 
-            Player player = null;
-
-            if (Request.Cookies["userInfo"] != null)
-            {
-                string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
-                int? id = Int32.Parse(idStr);
-                player = new Player(id);
-            }
+            Player player = base.GetPlayer();
 
             if (player == null)
             {
