@@ -9,6 +9,7 @@ namespace Battlezeppelins.Models
 {
     public class Game
     {
+        public enum GameState { IN_PROGRESS = 0, CHALLENGER_WON = 1, CHALLENGEE_WON = 2 }
         public enum Role { CHALLENGER, CHALLENGEE }
 
         public GamePlayer player { get; set; }
@@ -69,7 +70,25 @@ namespace Battlezeppelins.Models
 
         public static void Register(Player challenger, Player challengee)
         {
-            // Insert game
+            if (challenger != null && challengee != null)
+            {
+                MySqlConnection conn = new MySqlConnection(
+                ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+                MySqlCommand myCommand = conn.CreateCommand();
+                conn.Open();
+
+                try
+                {
+                    myCommand.CommandText = "INSERT INTO battlezeppelins.game (challenger, challengee, gameState) VALUES (@challenger, @challengee, " + (int)GameState.IN_PROGRESS + ")";
+                    myCommand.Parameters.AddWithValue("@challenger", challenger.id);
+                    myCommand.Parameters.AddWithValue("@challengee", challengee.id);
+                    myCommand.ExecuteNonQuery();
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
         }
     }
 }

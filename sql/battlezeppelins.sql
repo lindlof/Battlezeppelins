@@ -19,17 +19,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `battlezeppelins`.`GameState`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `battlezeppelins`.`GameState` (
-  `id` INT UNSIGNED NOT NULL,
-  `stateName` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `stateName_UNIQUE` (`stateName` ASC))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `battlezeppelins`.`Game`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `battlezeppelins`.`Game` (
@@ -40,7 +29,6 @@ CREATE TABLE IF NOT EXISTS `battlezeppelins`.`Game` (
   PRIMARY KEY (`id`),
   INDEX `fk_player_id_1_idx` (`challenger` ASC),
   INDEX `fk_player_id_2_idx` (`challengee` ASC),
-  INDEX `fk_gamestate_id_idx` (`gameState` ASC),
   CONSTRAINT `fk_player_id_game_1`
     FOREIGN KEY (`challenger`)
     REFERENCES `battlezeppelins`.`Player` (`id`)
@@ -49,11 +37,6 @@ CREATE TABLE IF NOT EXISTS `battlezeppelins`.`Game` (
   CONSTRAINT `fk_player_id_game_2`
     FOREIGN KEY (`challengee`)
     REFERENCES `battlezeppelins`.`Player` (`id`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_gamestate_id`
-    FOREIGN KEY (`gameState`)
-    REFERENCES `battlezeppelins`.`GameState` (`id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -85,15 +68,3 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
--- -----------------------------------------------------
--- Data for table `battlezeppelins`.`GameState`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `battlezeppelins`;
-INSERT INTO `battlezeppelins`.`GameState` (`id`, `stateName`) VALUES (0, 'IN_PROGRESS');
-INSERT INTO `battlezeppelins`.`GameState` (`id`, `stateName`) VALUES (1, 'CHALLENGER_WON');
-INSERT INTO `battlezeppelins`.`GameState` (`id`, `stateName`) VALUES (2, 'CHALLENGEE_WON');
-
-COMMIT;
-
