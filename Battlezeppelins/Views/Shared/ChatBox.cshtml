@@ -24,11 +24,11 @@
 </div>
 
 <script>
-  var lastTime;
+  var lastTime = $.now();
   function askMessages() {
     $.ajax({
       type: "POST",
-      url: "Chat/GetMessage",
+      url: "Chat/GetMessages",
       data: { fromTime: lastTime },
       success: function (data) {
         lastTime = $.now();
@@ -42,7 +42,7 @@
       url: "Chat/SendMessage",
       data: { message: $("#message").val()},
       success: function (data) {
-        $("#message").val() = "";
+        $("#message").val = "";
         alert(data);
       }
     });
