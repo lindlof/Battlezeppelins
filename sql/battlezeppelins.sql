@@ -65,6 +65,24 @@ CREATE TABLE IF NOT EXISTS `battlezeppelins`.`GameChallenge` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `battlezeppelins`.`Message`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `battlezeppelins`.`Message` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `player` INT UNSIGNED NOT NULL,
+  `time` DATETIME NOT NULL,
+  `text` VARCHAR(4000) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_player_id_message_idx` (`player` ASC),
+  CONSTRAINT `fk_player_id_message`
+    FOREIGN KEY (`player`)
+    REFERENCES `battlezeppelins`.`Player` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
