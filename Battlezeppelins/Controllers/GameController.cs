@@ -15,7 +15,7 @@ namespace Battlezeppelins.Controllers
 
             if (game != null)
             {
-                return Json(new { playing = true, opponent = game.opponent }, JsonRequestBehavior.AllowGet);
+                return Json(new { playing = true, opponent = game.opponent.name }, JsonRequestBehavior.AllowGet);
             }
             else
             {
