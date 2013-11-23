@@ -29,8 +29,15 @@
             <input type="submit" value="Register" />
         </form>
     } else {
-        @Html.Partial("Game")
-        @Html.Partial("UserList")
-        @Html.Partial("ChallengeInbox")
+        <div class="row">
+          <div class="col-xs-9">
+            @Html.Partial("ChatBox")
+          </div>         
+          <div class="col-xs-3">
+            @Html.Partial("Game")
+            @Html.Partial("UserList")
+            @Html.Partial("ChallengeInbox")
+          </div>
+        </div>
     }
 </div>
