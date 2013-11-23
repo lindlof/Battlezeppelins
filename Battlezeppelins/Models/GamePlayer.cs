@@ -10,7 +10,7 @@ namespace Battlezeppelins.Models
     /// </summary>
     public class GamePlayer : Player
     {
-        Game.Role role;
+        public Game.Role role { get; private set; }
 
         public GamePlayer(int? id, Game.Role role) : base(id) {
             this.role = role;

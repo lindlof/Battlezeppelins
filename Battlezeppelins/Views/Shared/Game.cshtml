@@ -1,5 +1,5 @@
 ﻿<div id="game" style="display: none;">
-    <p id="opponent"></p>
+    <p id="opponent"></p> <input type="button" onclick="surrenderGame()" value="Surrender" />
 </div>
 <script>
     function pollGameMetadata() {
@@ -16,4 +16,14 @@
     }
     window.setInterval(pollGameMetadata, 5000);
     pollGameMetadata();
+
+    function surrenderGame() {
+        $.ajax({
+            type: "POST",
+            url: "Game/Surrender",
+            success: function (data) {
+                pollGameMetadata();
+            }
+        });
+    }
 </script>

@@ -23,5 +23,17 @@ namespace Battlezeppelins.Controllers
             }
         }
 
+        public ActionResult Surrender()
+        {
+            Game game = Game.GetInstance(base.GetPlayer());
+
+            if (game != null)
+            {
+                game.Surrender();
+            }
+
+            return null;
+        }
+
     }
 }

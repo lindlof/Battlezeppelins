@@ -28,8 +28,9 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "SELECT * FROM battlezeppelins.game WHERE " +
-                        "challenger = @playerId OR challengee = @playerId";
+                    myCommand.CommandText = "SELECT * FROM battlezeppelins.game WHERE gameState = @gameState " + 
+                        "AND (challenger = @playerId OR challengee = @playerId)";
+                    myCommand.Parameters.AddWithValue("gameState", (int)GameState.IN_PROGRESS);
                     myCommand.Parameters.AddWithValue("@playerId", player.id);
                     using (MySqlDataReader reader = myCommand.ExecuteReader())
                     {
@@ -66,6 +67,27 @@ namespace Battlezeppelins.Models
         {
             this.player = player;
             this.opponent = opponent;
+        }
+
+        public void Surrender()
+        {
+            MySqlConnection conn = new MySqlConnection(
+                ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+
+            int newState = (player.role == Role.CHALLENGER) ? (int)GameState.CHALLENGER_WON : (int)GameState.CHALLENGEE_WON;
+
+            try
+            {
+                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @gameState";
+                myCommand.Parameters.AddWithValue("gameState", newState);
+                myCommand.ExecuteNonQuery();
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
 
         public static void Register(Player challenger, Player challengee)
