@@ -22,6 +22,7 @@ var poller = window.setInterval(function () {
                 <li>@Html.ActionLink("your logo here", "Index", "Home")</li>
                 <li>@Html.ActionLink("Home", "Index", "Home")</li>
                 <li>@Html.ActionLink("About", "About", "Home")</li>
+                <li>@Html.ActionLink("Game", "Game","Home")</li>
                 <div class="pull-right" style="padding-right:10px">
                   <button type="button" class="btn btn-default btn-lg">
                     <span class="glyphicon glyphicon-hand-right"></span>
@@ -33,7 +34,7 @@ var poller = window.setInterval(function () {
         </header>
         <div id="body" class="container well" style="padding-top: 70px;">
             @RenderSection("featured", required: false)
-            <section class="">
+            <section>
                 @RenderBody()
             </section>
         </div>

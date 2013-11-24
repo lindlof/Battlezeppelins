@@ -5,8 +5,8 @@
     ViewBag.Title = "Battle Area";
 }
 @section featured {
-    <section class="featured">
-        <div class="content-wrapper">
+    <section>
+        <div>
             <hgroup class="title">
                 <h1>@ViewBag.Title</h1>
             </hgroup>
@@ -18,7 +18,7 @@
         </div>
     </section>
 }
-<div class="round">
+<div>
     @if (!userExists)
     {
         <h5>Getting Started</h5><br />

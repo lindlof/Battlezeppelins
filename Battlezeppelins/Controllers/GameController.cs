@@ -22,6 +22,5 @@ namespace Battlezeppelins.Controllers
                 return Json(new { playing = false }, JsonRequestBehavior.AllowGet);
             }
         }
-
     }
 }
