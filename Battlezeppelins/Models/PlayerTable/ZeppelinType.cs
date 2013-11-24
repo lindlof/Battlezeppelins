@@ -32,7 +32,7 @@ namespace Battlezeppelins.Models
 
         public string Name { get { return name; } }
 
-        public double Length { get { return length; } }
+        public int Length { get { return length; } }
 
         public override string ToString()
         {

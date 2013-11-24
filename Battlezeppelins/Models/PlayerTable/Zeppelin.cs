@@ -50,5 +50,17 @@ namespace Battlezeppelins.Models
 
             return false;
         }
+
+        public int getWidth()
+        {
+            if (this.rotDown) return 1;
+            else return this.type.Length;
+        }
+
+        public int getHeight()
+        {
+            if (!this.rotDown) return 1;
+            else return this.type.Length;
+        }
     }
 }

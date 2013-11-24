@@ -8,6 +8,9 @@ namespace Battlezeppelins.Models
 
     public class GameTable
     {
+        static const int TABLE_ROWS = 10;
+        static const int TABLE_COLS = 10;
+
         public Game.Role role { get; private set; }
         public List<OpenPoint> openPoints { get; private set; }
         public List<Zeppelin> zeppelins { get; private set; }
@@ -35,6 +38,14 @@ namespace Battlezeppelins.Models
                 // No colliding zeppelins
                 if (zeppelin.collides(newZeppelin))
                     return false;
+            }
+
+            if (newZeppelin.x < 0 ||
+                newZeppelin.x + newZeppelin.getWidth()-1 > TABLE_COLS - 1 ||
+                newZeppelin.y < 0 ||
+                newZeppelin.y + newZeppelin.getHeight()-1 > TABLE_ROWS - 1)
+            {
+                return false;
             }
 
             this.zeppelins.Add(newZeppelin);
