@@ -31,9 +31,11 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "SELECT id, gameState, challenger, challengee FROM battlezeppelins.game WHERE gameState = @gameState " + 
+                    myCommand.CommandText = "SELECT id, gameState, challenger, challengee FROM battlezeppelins.game " +
+                        "WHERE (gameState = @gameStatePrep OR gameState = @gameStateProgress) " + 
                         "AND (challenger = @playerId OR challengee = @playerId)";
-                    myCommand.Parameters.AddWithValue("@gameState", (int)GameState.IN_PROGRESS);
+                    myCommand.Parameters.AddWithValue("@gameStatePrep", (int)GameState.PREPARATION);
+                    myCommand.Parameters.AddWithValue("@gameStateProgress", (int)GameState.IN_PROGRESS);
                     myCommand.Parameters.AddWithValue("@playerId", player.id);
                     using (MySqlDataReader reader = myCommand.ExecuteReader())
                     {
