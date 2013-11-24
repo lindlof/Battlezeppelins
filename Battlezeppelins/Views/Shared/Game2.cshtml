@@ -1,0 +1,29 @@
+﻿<div id="game" style="display: none;">
+    <p id="opponent"></p> <input type="button" onclick="surrenderGame()" value="Surrender" />
+</div>
+<script>
+    function pollGameMetadata() {
+        $.getJSON('@Url.Content("~/Game/Metadata")', function (data) {
+            var div = document.getElementById("game");
+            var text = document.getElementById("opponent");
+            if (data.playing) {
+                text.textContent = "Playing with " + data.opponent;
+                div.style.display = "inline-block";
+            } else {
+                div.style.display = "none";
+            }
+        });
+    }
+    window.setInterval(pollGameMetadata, 5000);
+    pollGameMetadata();
+
+    function surrenderGame() {
+        $.ajax({
+            type: "POST",
+            url: "Game/Surrender",
+            success: function (data) {
+                pollGameMetadata();
+            }
+        });
+    }
+</script>
