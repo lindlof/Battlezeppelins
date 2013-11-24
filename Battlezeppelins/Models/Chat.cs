@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using MySql.Data.MySqlClient;
 using System.Web.Script.Serialization;
+using System.Globalization;
 
 namespace Battlezeppelins.Models
 {
@@ -33,12 +34,13 @@ namespace Battlezeppelins.Models
 
         class Message
         {
+            public string id;
             public string user;
             public string time;
             public string message;
         }
 
-        public static string getMessages(string fromTime)
+        public static string getMessages(int fromId)
         {
             MySqlConnection conn = new MySqlConnection(
             ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
@@ -46,20 +48,48 @@ namespace Battlezeppelins.Models
             conn.Open();
 
             List<Message> messages = new List<Message>();
+            int maxId;
 
             try
             {
-                myCommand.CommandText = "SELECT * FROM battlezeppelins.message WHERE TIMESTAMPDIFF(SECOND, @time, message.time) > 0";
-                myCommand.Parameters.AddWithValue("@fromTime", DateTime.Parse(fromTime));
+                myCommand.CommandText = "SELECT MAX(id) AS id FROM battlezeppelins.message";
+                
+                using (MySqlDataReader reader = myCommand.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        string maxIdStr = reader.GetString(reader.GetOrdinal("id"));
+                        maxId = Int32.Parse(maxIdStr);
+                    }
+                    else
+                    {
+                        maxId = 0;
+                    }
+                }
+
+                if (fromId < 0)
+                {
+                    fromId = maxId + fromId;
+                }
+
+                if (fromId < 0) fromId = 0;
+
+                myCommand.CommandText = "SELECT Message.id, Player.name, Message.time, Message.text FROM battlezeppelins.message " +
+                    "INNER JOIN Player ON Player.id=Message.player " +
+                    "WHERE Message.id > @fromId";
+                myCommand.Parameters.AddWithValue("@fromId", fromId);
+
                 using (MySqlDataReader reader = myCommand.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        string user = reader.GetString(reader.GetOrdinal("user"));
+                        string id = reader.GetString(reader.GetOrdinal("id"));
+                        string user = reader.GetString(reader.GetOrdinal("name"));
                         string time = reader.GetString(reader.GetOrdinal("time"));
                         string text = reader.GetString(reader.GetOrdinal("text"));
 
                         Message message = new Message();
+                        message.id = id;
                         message.user = user;
                         message.time = time;
                         message.message = text;
@@ -74,7 +104,7 @@ namespace Battlezeppelins.Models
 
             
             JavaScriptSerializer jsonSerialiser = new JavaScriptSerializer();
-            return(jsonSerialiser.Serialize(messages));
+            return (jsonSerialiser.Serialize(messages));
         }
     }
 }

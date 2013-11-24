@@ -24,14 +24,14 @@
 </div>
 
 <script>
-  var lastTime = $.now();
+  var lastId = -5;
   function askMessages() {
     $.ajax({
       type: "POST",
       url: "Chat/GetMessages",
-      data: { fromTime: lastTime },
+      data: { fromId: lastId },
       success: function (data) {
-        lastTime = $.now();
+        lastId = 0;
         alert(data);
       }
     });

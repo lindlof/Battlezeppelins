@@ -22,9 +22,10 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult GetMessages()
         {
-            string time = Request.Form["fromTime"];
+            string fromIdStr = Request.Form["fromId"];
+            int fromId = Int32.Parse(fromIdStr);
 
-            string messages = Chat.getMessages(time);
+            string messages = Chat.getMessages(fromId);
             return Json(messages, JsonRequestBehavior.AllowGet);
         }
 
