@@ -160,7 +160,7 @@ namespace Battlezeppelins.Models
 
             try
             {
-                myCommand.CommandText = "SELECT " + tableName + " FROM battlezeppelins.game WHERE gameId = @gameId";
+                myCommand.CommandText = "SELECT " + tableName + " FROM battlezeppelins.game WHERE id = @gameId";
                 myCommand.Parameters.AddWithValue("@gameId", this.id);
                 using (MySqlDataReader reader = myCommand.ExecuteReader())
                 {
