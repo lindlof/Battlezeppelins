@@ -52,7 +52,7 @@ namespace Battlezeppelins.Models
 
             try
             {
-                myCommand.CommandText = "SELECT MAX(id) AS id FROM battlezeppelins.message";
+                myCommand.CommandText = "SELECT COALESCE(MAX(id), 0) AS id FROM battlezeppelins.message";
                 
                 using (MySqlDataReader reader = myCommand.ExecuteReader())
                 {
