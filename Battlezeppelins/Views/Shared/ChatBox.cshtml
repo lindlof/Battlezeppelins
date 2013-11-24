@@ -1,50 +1,54 @@
-﻿<div style="height:436px; overflow: hidden;padding-left: 15px;padding-right: 15px;">
-  <div class="row well" style="padding:0px;margin-bottom: 3px;">
-    <ul class="list-inline" style="margin:2px;">
-      <li>
-        <small class="text-primary">{{msg.time | chatTime}}</small>
-      </li>
-      <li class="text-primary">
-        <{{msg.name}}>
-      </li>
-      <li>
-        {{msg.message}}
-      </li>
-    </ul>
-  </div>
-</div>
+﻿<div id="msgBox" style="height:436px; overflow: hidden;padding-left: 15px;padding-right: 15px;"></div>
+
 <div class="row well" style="margin-top:10px;">
   <div class="col-xs-2">
-    <button class="btn btn-info" onclick="sendMessages()"><b>Send</b></button>
-    <button class="btn btn-info" onclick="askMessages()"><b>Ask messages</b></button>
+    <button class="btn btn-info" onclick="sendMessage()"><b>Send</b></button>
   </div>
   <div class="form-group col-xs-10">
     <input class="form-control" id="message" type="text" maxlength="240">
   </div>
 </div>
-
 <script>
   var lastId = -5;
+  $(function(){
+    $("#message").keypress(function (e) {
+      if (e.keyCode == 13) {
+        sendMessage();
+      }
+    });
+  });
   function askMessages() {
     $.ajax({
       type: "POST",
       url: "Chat/GetMessages",
       data: { fromId: lastId },
       success: function (data) {
-        lastId = 0;
-        alert(data);
+        if (data.length == 0)
+          return;
+        $.each(data, function (i, msg) {
+          $("#msgBox").append('<div class="row well" style="padding:0px;margin-bottom: 3px;">'+
+                              '<ul  class="list-inline" style="margin:2px;">'+
+                              '<li><small class="text-primary">' + msg.time.split(" ").splice(1,2).join(" ") + '</small></li>' +
+                              '<li class="text-primary">&#60;' + msg.user + '&#62;</li>' +
+                              '<li>' + msg.message + '</li></ul></div>');
+          $("#msgBox").scrollTop($("#msgBox")[0].scrollHeight);
+          lastId = msg.id;
+        });
       }
     });
+    setTimeout(askMessages,500);
   };
-  function sendMessages() {
+  function sendMessage() {
+    if ($("#message").val() === "")
+      return;
     $.ajax({
       type: "POST",
       url: "Chat/SendMessage",
       data: { message: $("#message").val()},
       success: function (data) {
-        $("#message").val = "";
-        alert(data);
+        $("#message").val('');
       }
     });
   };
+  askMessages();
 </script>

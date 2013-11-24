@@ -24,9 +24,7 @@ namespace Battlezeppelins.Controllers
         {
             string fromIdStr = Request.Form["fromId"];
             int fromId = Int32.Parse(fromIdStr);
-
-            string messages = Chat.getMessages(fromId);
-            return Json(messages, JsonRequestBehavior.AllowGet);
+            return Json(Chat.getMessages(fromId), JsonRequestBehavior.AllowGet);
         }
 
     }
