@@ -8,8 +8,8 @@ namespace Battlezeppelins.Models
 
     public class GameTable
     {
-        static const int TABLE_ROWS = 10;
-        static const int TABLE_COLS = 10;
+        public const int TABLE_ROWS = 10;
+        public const int TABLE_COLS = 10;
 
         public Game.Role role { get; private set; }
         public List<OpenPoint> openPoints { get; private set; }

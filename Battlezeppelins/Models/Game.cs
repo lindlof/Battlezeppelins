@@ -14,7 +14,7 @@ namespace Battlezeppelins.Models
         public enum Role { CHALLENGER, CHALLENGEE }
 
         private int id { get; set; }
-        private GameState gameState { public get; set; }
+        public GameState gameState { get; private set; }
         public GamePlayer player { get; set; }
         public GamePlayer opponent { get; set; }
 
