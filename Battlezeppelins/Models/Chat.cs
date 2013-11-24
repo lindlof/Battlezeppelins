@@ -76,7 +76,8 @@ namespace Battlezeppelins.Models
 
                 myCommand.CommandText = "SELECT Message.id, Player.name, Message.time, Message.text FROM battlezeppelins.message " +
                     "INNER JOIN Player ON Player.id=Message.player " +
-                    "WHERE Message.id > @fromId";
+                    "WHERE Message.id > @fromId " +
+                    "ORDER BY Message.id";
                 myCommand.Parameters.AddWithValue("@fromId", fromId);
 
                 using (MySqlDataReader reader = myCommand.ExecuteReader())
