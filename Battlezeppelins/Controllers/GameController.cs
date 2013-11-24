@@ -53,5 +53,19 @@ namespace Battlezeppelins.Controllers
 
             return Json(zeppelinAdded, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult GetPlayerTable()
+        {
+            Game game = Game.GetInstance(base.GetPlayer());
+            GameTable table = game.GetPlayerTable();
+            return Json(table, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetOpponentTable()
+        {
+            Game game = Game.GetInstance(base.GetPlayer());
+            GameTable table = game.GetOpponentTable();
+            return Json(table, JsonRequestBehavior.AllowGet);
+        }
     }
 }
