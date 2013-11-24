@@ -15,10 +15,31 @@ namespace Battlezeppelins.Models
         public GameTable(Game.Role role)
         {
             this.role = role;
+
+            this.openPoints = new List<OpenPoint>();
+            this.zeppelins = new List<Zeppelin>();
         }
 
         public void removeZeppelins() {
             zeppelins = null;
+        }
+
+        public bool AddZeppelin(Zeppelin newZeppelin)
+        {
+            foreach (Zeppelin zeppelin in this.zeppelins)
+            {
+                // No multiple zeppelins of the same type
+                if (zeppelin.type == newZeppelin.type)
+                    return false;
+
+                // No colliding zeppelins
+                if (zeppelin.collides(newZeppelin))
+                    return false;
+            }
+
+            this.zeppelins.Add(newZeppelin);
+
+            return true;
         }
     }
 }

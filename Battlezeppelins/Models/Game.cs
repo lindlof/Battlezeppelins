@@ -102,6 +102,12 @@ namespace Battlezeppelins.Models
         {
             if (challenger != null && challengee != null)
             {
+                GameTable challengerTable = new GameTable(Role.CHALLENGER);
+                GameTable challengeeTable = new GameTable(Role.CHALLENGEE);
+
+                string challengerTableStr = new JavaScriptSerializer().Serialize(challengerTable);
+                string challengeeTableStr = new JavaScriptSerializer().Serialize(challengeeTable);
+
                 MySqlConnection conn = new MySqlConnection(
                 ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
                 MySqlCommand myCommand = conn.CreateCommand();
@@ -109,10 +115,14 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "INSERT INTO battlezeppelins.game (challenger, challengee, gameState) VALUES (@challenger, @challengee, @gameState)";
+                    myCommand.CommandText = 
+                        "INSERT INTO battlezeppelins.game (challenger, challengee, gameState, challengerTable, challengeeTable) " +
+                        "VALUES (@challenger, @challengee, @gameState, @challengerTable, @challengeeTable)";
                     myCommand.Parameters.AddWithValue("@challenger", challenger.id);
                     myCommand.Parameters.AddWithValue("@challengee", challengee.id);
                     myCommand.Parameters.AddWithValue("@gameState", (int)GameState.PREPARATION);
+                    myCommand.Parameters.AddWithValue("@challengerTable", challengerTableStr);
+                    myCommand.Parameters.AddWithValue("@challengeeTable", challengeeTableStr);
                     myCommand.ExecuteNonQuery();
                 }
                 finally
@@ -122,47 +132,70 @@ namespace Battlezeppelins.Models
             }
         }
 
-        public List<GameTable> GetGame()
+        public GameTable GetPlayerTable()
         {
-            List<GameTable> tables = null;
+            return GetTable(this.player.role);
+        }
 
+        public GameTable GetOpponentTable()
+        {
+            GameTable table = GetTable(this.opponent.role);
+            table.removeZeppelins();
+            return table;
+        }
+
+        private GameTable GetTable(Role role)
+        {
+            MySqlConnection conn = new MySqlConnection(
+            ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+
+            string tableName = (role == Role.CHALLENGER) ? "challengerTable" : "challengeeTable";
+
+            try
             {
-                MySqlConnection conn = new MySqlConnection(
-                ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
-                MySqlCommand myCommand = conn.CreateCommand();
-                conn.Open();
-
-                try
+                myCommand.CommandText = "SELECT " + tableName + " FROM battlezeppelins.game WHERE gameId = @gameId";
+                myCommand.Parameters.AddWithValue("@gameId", this.id);
+                using (MySqlDataReader reader = myCommand.ExecuteReader())
                 {
-                    myCommand.CommandText = "SELECT gameTables FROM battlezeppelins.game WHERE gameId = @gameId";
-                    myCommand.Parameters.AddWithValue("@gameId", this.id);
-                    using (MySqlDataReader reader = myCommand.ExecuteReader())
+                    if (reader.Read())
                     {
-                        if (reader.Read())
-                        {
-                            string gameTablesStr = reader.GetString(reader.GetOrdinal("gameTable"));
-                            tables = new JavaScriptSerializer().Deserialize<List<GameTable>>(gameTablesStr);
-                        }
-                    }
-                }
-                finally
-                {
-                    conn.Close();
-                }
-            }
-
-            if (tables != null)
-            {
-                foreach (GameTable table in tables)
-                {
-                    if (table.role != this.player.role)
-                    {
-                        table.removeZeppelins();
+                        string gameTablesStr = reader.GetString(reader.GetOrdinal(tableName));
+                        GameTable  table = new JavaScriptSerializer().Deserialize<GameTable>(gameTablesStr);
+                        return table;
                     }
                 }
             }
+            finally
+            {
+                conn.Close();
+            }
 
-            return tables;
+            return null;
+        }
+
+        private void PutTable(GameTable table)
+        {
+            string tableStr = new JavaScriptSerializer().Serialize(table);
+
+            MySqlConnection conn = new MySqlConnection(
+            ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+
+            string tableName = (table.role == Role.CHALLENGER) ? "challengerTable" : "challengeeTable";
+
+            try
+            {
+                myCommand.CommandText = "UPDATE battlezeppelins.game SET " + tableName + " = @table";
+                myCommand.Parameters.AddWithValue("@table", tableStr);
+                myCommand.ExecuteNonQuery();
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
     }
 }
