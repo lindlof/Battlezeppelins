@@ -175,10 +175,12 @@
     <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GamePlayer.cs" />
-    <Compile Include="Models\GameTable.cs" />
+    <Compile Include="Models\PlayerTable\GameTable.cs" />
+    <Compile Include="Models\PlayerTable\OpenPoint.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Data.cs" />
-    <Compile Include="Models\Zeppelin.cs" />
+    <Compile Include="Models\PlayerTable\Zeppelin.cs" />
+    <Compile Include="Models\PlayerTable\ZeppelinType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

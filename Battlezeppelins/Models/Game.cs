@@ -9,7 +9,7 @@ namespace Battlezeppelins.Models
 {
     public class Game
     {
-        public enum GameState { IN_PROGRESS = 0, CHALLENGER_WON = 1, CHALLENGEE_WON = 2 }
+        public enum GameState { PREPARATION = 0, IN_PROGRESS = 1, CHALLENGER_WON = 2, CHALLENGEE_WON = 3 }
         public enum Role { CHALLENGER, CHALLENGEE }
 
         public GamePlayer player { get; set; }
@@ -30,7 +30,7 @@ namespace Battlezeppelins.Models
                 {
                     myCommand.CommandText = "SELECT * FROM battlezeppelins.game WHERE gameState = @gameState " + 
                         "AND (challenger = @playerId OR challengee = @playerId)";
-                    myCommand.Parameters.AddWithValue("gameState", (int)GameState.IN_PROGRESS);
+                    myCommand.Parameters.AddWithValue("@gameState", (int)GameState.IN_PROGRESS);
                     myCommand.Parameters.AddWithValue("@playerId", player.id);
                     using (MySqlDataReader reader = myCommand.ExecuteReader())
                     {
@@ -81,7 +81,7 @@ namespace Battlezeppelins.Models
             try
             {
                 myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @gameState";
-                myCommand.Parameters.AddWithValue("gameState", newState);
+                myCommand.Parameters.AddWithValue("@gameState", newState);
                 myCommand.ExecuteNonQuery();
             }
             finally
@@ -101,9 +101,10 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "INSERT INTO battlezeppelins.game (challenger, challengee, gameState) VALUES (@challenger, @challengee, " + (int)GameState.IN_PROGRESS + ")";
+                    myCommand.CommandText = "INSERT INTO battlezeppelins.game (challenger, challengee, gameState) VALUES (@challenger, @challengee, @gameState)";
                     myCommand.Parameters.AddWithValue("@challenger", challenger.id);
                     myCommand.Parameters.AddWithValue("@challengee", challengee.id);
+                    myCommand.Parameters.AddWithValue("@gameState", (int)GameState.PREPARATION);
                     myCommand.ExecuteNonQuery();
                 }
                 finally

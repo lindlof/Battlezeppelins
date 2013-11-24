@@ -22,7 +22,6 @@ namespace Battlezeppelins.Controllers
                 return Json(new { playing = false }, JsonRequestBehavior.AllowGet);
             }
         }
-<<<<<<< HEAD
 
         public ActionResult Surrender()
         {
@@ -35,8 +34,5 @@ namespace Battlezeppelins.Controllers
 
             return null;
         }
-
-=======
->>>>>>> origin/layout
     }
 }
