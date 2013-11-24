@@ -175,8 +175,10 @@
     <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GamePlayer.cs" />
+    <Compile Include="Models\GameTable.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Data.cs" />
+    <Compile Include="Models\Zeppelin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
