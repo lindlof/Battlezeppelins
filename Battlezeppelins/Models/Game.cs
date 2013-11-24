@@ -175,7 +175,7 @@ namespace Battlezeppelins.Models
             return null;
         }
 
-        private void PutTable(GameTable table)
+        public void PutTable(GameTable table)
         {
             string tableStr = new JavaScriptSerializer().Serialize(table);
 

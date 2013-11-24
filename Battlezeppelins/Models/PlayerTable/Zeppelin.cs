@@ -12,7 +12,7 @@ namespace Battlezeppelins.Models
         public int y { get; private set; }
         public bool rotDown { get; private set; }
 
-        public Zeppelin(ZeppelinType zeppelin, int x, int y, bool rotDown) {
+        public Zeppelin(ZeppelinType type, int x, int y, bool rotDown) {
             this.type = type;
             this.x = x;
             this.y = y;
