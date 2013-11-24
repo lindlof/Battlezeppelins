@@ -32,7 +32,7 @@ namespace Battlezeppelins.Models
             }
         }
 
-        class Message
+        public class Message
         {
             public string id;
             public string user;
@@ -40,7 +40,7 @@ namespace Battlezeppelins.Models
             public string message;
         }
 
-        public static string getMessages(int fromId)
+        public static List<Message> getMessages(int fromId)
         {
             MySqlConnection conn = new MySqlConnection(
             ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
@@ -104,7 +104,7 @@ namespace Battlezeppelins.Models
 
             
             JavaScriptSerializer jsonSerialiser = new JavaScriptSerializer();
-            return (jsonSerialiser.Serialize(messages));
+            return messages;
         }
     }
 }
