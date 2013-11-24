@@ -52,6 +52,17 @@ namespace Battlezeppelins.Controllers
 
             if (zeppelinAdded) {
                 game.PutTable(table);
+
+                // Are both players ready now?
+                table = game.GetPlayerTable();
+                if (table.zeppelins.Count == 3)
+                {
+                    GameTable opponentTable = game.GetOpponentTable();
+                    if (opponentTable.zeppelins.Count == 3)
+                    {
+                        game.SetState(Game.GameState.IN_PROGRESS);
+                    }
+                }
             }
 
             return Json(zeppelinAdded, JsonRequestBehavior.AllowGet);

@@ -14,6 +14,7 @@ namespace Battlezeppelins.Models
         public enum Role { CHALLENGER, CHALLENGEE }
 
         private int id { get; set; }
+        private GameState gameState { public get; set; }
         public GamePlayer player { get; set; }
         public GamePlayer opponent { get; set; }
 
@@ -30,7 +31,7 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "SELECT id, challenger, challengee FROM battlezeppelins.game WHERE gameState = @gameState " + 
+                    myCommand.CommandText = "SELECT id, gameState, challenger, challengee FROM battlezeppelins.game WHERE gameState = @gameState " + 
                         "AND (challenger = @playerId OR challengee = @playerId)";
                     myCommand.Parameters.AddWithValue("@gameState", (int)GameState.IN_PROGRESS);
                     myCommand.Parameters.AddWithValue("@playerId", player.id);
@@ -46,18 +47,20 @@ namespace Battlezeppelins.Models
                                 GamePlayer gamePlayer = new GamePlayer(challengerId, Game.Role.CHALLENGER);
                                 GamePlayer gameOpponent = new GamePlayer(challengeeId, Game.Role.CHALLENGEE);
                                 game = new Game(gamePlayer, gameOpponent);
-
-                                int id = reader.GetInt32(reader.GetOrdinal("id"));
-                                game.id = id;
                             }
                             else if (player.id == challengeeId)
                             {
                                 GamePlayer gamePlayer = new GamePlayer(challengeeId, Game.Role.CHALLENGEE);
                                 GamePlayer gameOpponent = new GamePlayer(challengerId, Game.Role.CHALLENGER);
                                 game = new Game(gamePlayer, gameOpponent);
+                            }
 
+                            if (game != null)
+                            {
                                 int id = reader.GetInt32(reader.GetOrdinal("id"));
                                 game.id = id;
+                                int gameState = reader.GetInt32(reader.GetOrdinal("gameState"));
+                                game.gameState = (GameState)gameState;
                             }
                         }
                     }
@@ -191,6 +194,27 @@ namespace Battlezeppelins.Models
                 myCommand.CommandText = "UPDATE battlezeppelins.game SET " + tableName + " = @table";
                 myCommand.Parameters.AddWithValue("@table", tableStr);
                 myCommand.ExecuteNonQuery();
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+        public void SetState(GameState state)
+        {
+            MySqlConnection conn = new MySqlConnection(
+            ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+
+            try
+            {
+                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @state";
+                myCommand.Parameters.AddWithValue("@state", state);
+                myCommand.ExecuteNonQuery();
+
+                this.gameState = state;
             }
             finally
             {
