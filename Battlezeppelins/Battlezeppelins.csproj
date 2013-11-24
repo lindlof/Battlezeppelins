@@ -287,6 +287,7 @@
     <Content Include="Views\Shared\ChallengeInbox.cshtml" />
     <Content Include="Views\Shared\Game.cshtml" />
     <Content Include="Views\Shared\ChatBox.cshtml" />
+    <Content Include="Views\Home\Game.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
