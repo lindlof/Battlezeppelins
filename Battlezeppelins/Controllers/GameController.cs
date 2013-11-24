@@ -46,24 +46,7 @@ namespace Battlezeppelins.Controllers
             bool rotDown = Boolean.Parse(Request.Form["rotDown"]);
 
             Zeppelin zeppelin = new Zeppelin(type, x, y, rotDown);
-
-            GameTable table = game.GetPlayerTable();
-            bool zeppelinAdded = table.AddZeppelin(zeppelin);
-
-            if (zeppelinAdded) {
-                game.PutTable(table);
-
-                // Are both players ready now?
-                table = game.GetPlayerTable();
-                if (table.zeppelins.Count == 3)
-                {
-                    GameTable opponentTable = game.GetOpponentTable();
-                    if (opponentTable.zeppelins.Count == 3)
-                    {
-                        game.SetState(Game.GameState.IN_PROGRESS);
-                    }
-                }
-            }
+            bool zeppelinAdded = game.AddZeppelin(zeppelin);
 
             return Json(zeppelinAdded, JsonRequestBehavior.AllowGet);
         }

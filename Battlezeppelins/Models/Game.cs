@@ -178,7 +178,7 @@ namespace Battlezeppelins.Models
             return null;
         }
 
-        public void PutTable(GameTable table)
+        private void PutTable(GameTable table)
         {
             string tableStr = new JavaScriptSerializer().Serialize(table);
 
@@ -201,7 +201,7 @@ namespace Battlezeppelins.Models
             }
         }
 
-        public void SetState(GameState state)
+        private void SetState(GameState state)
         {
             MySqlConnection conn = new MySqlConnection(
             ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
@@ -219,6 +219,36 @@ namespace Battlezeppelins.Models
             finally
             {
                 conn.Close();
+            }
+        }
+
+        public bool AddZeppelin(Zeppelin zeppelin)
+        {
+            GameTable table = this.GetPlayerTable();
+            bool zeppelinAdded = table.AddZeppelin(zeppelin);
+
+            if (zeppelinAdded)
+            {
+                this.PutTable(table);
+                this.CheckGameState();
+            }
+
+            return zeppelinAdded;
+        }
+
+        public void CheckGameState()
+        {
+            if (gameState == GameState.PREPARATION)
+            {
+                GameTable table = this.GetPlayerTable();
+                if (table.zeppelins.Count == 3)
+                {
+                    GameTable opponentTable = this.GetOpponentTable();
+                    if (opponentTable.zeppelins.Count == 3)
+                    {
+                        this.SetState(Game.GameState.IN_PROGRESS);
+                    }
+                }
             }
         }
     }
