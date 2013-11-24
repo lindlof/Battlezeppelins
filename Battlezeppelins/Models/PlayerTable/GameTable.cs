@@ -15,6 +15,8 @@ namespace Battlezeppelins.Models
         public List<OpenPoint> openPoints { get; private set; }
         public List<Zeppelin> zeppelins { get; private set; }
 
+        public GameTable() { }
+
         public GameTable(Game.Role role)
         {
             this.role = role;
