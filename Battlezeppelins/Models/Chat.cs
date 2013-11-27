@@ -48,31 +48,27 @@ namespace Battlezeppelins.Models
             conn.Open();
 
             List<Message> messages = new List<Message>();
-            int maxId;
 
             try
             {
-                myCommand.CommandText = "SELECT COALESCE(MAX(id), 0) AS id FROM battlezeppelins.message";
-                
-                using (MySqlDataReader reader = myCommand.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        string maxIdStr = reader.GetString(reader.GetOrdinal("id"));
-                        maxId = Int32.Parse(maxIdStr);
-                    }
-                    else
-                    {
-                        maxId = 0;
-                    }
-                }
-
                 if (fromId < 0)
                 {
+                    // Negative fromId will be subtracted from max id
+                    int maxId = 0;
+                    myCommand.CommandText = "SELECT COALESCE(MAX(id), 0) AS id FROM battlezeppelins.message";
+                
+                    using (MySqlDataReader reader = myCommand.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            string maxIdStr = reader.GetString(reader.GetOrdinal("id"));
+                            maxId = Int32.Parse(maxIdStr);
+                        }
+                    }
+                
                     fromId = maxId + fromId;
+                    if (fromId < 0) fromId = 0;
                 }
-
-                if (fromId < 0) fromId = 0;
 
                 myCommand.CommandText = "SELECT Message.id, Player.name, Message.time, Message.text FROM battlezeppelins.message " +
                     "INNER JOIN Player ON Player.id=Message.player " +
