@@ -46,14 +46,14 @@ namespace Battlezeppelins.Models
 
                             if (player.id == challengerId)
                             {
-                                GamePlayer gamePlayer = new GamePlayer(challengerId, Game.Role.CHALLENGER);
-                                GamePlayer gameOpponent = new GamePlayer(challengeeId, Game.Role.CHALLENGEE);
+                                GamePlayer gamePlayer = GamePlayer.GetInstance(challengerId, Game.Role.CHALLENGER);
+                                GamePlayer gameOpponent = GamePlayer.GetInstance(challengeeId, Game.Role.CHALLENGEE);
                                 game = new Game(gamePlayer, gameOpponent);
                             }
                             else if (player.id == challengeeId)
                             {
-                                GamePlayer gamePlayer = new GamePlayer(challengeeId, Game.Role.CHALLENGEE);
-                                GamePlayer gameOpponent = new GamePlayer(challengerId, Game.Role.CHALLENGER);
+                                GamePlayer gamePlayer = GamePlayer.GetInstance(challengeeId, Game.Role.CHALLENGEE);
+                                GamePlayer gameOpponent = GamePlayer.GetInstance(challengerId, Game.Role.CHALLENGER);
                                 game = new Game(gamePlayer, gameOpponent);
                             }
 

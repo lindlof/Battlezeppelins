@@ -12,7 +12,14 @@ namespace Battlezeppelins.Models
     {
         public Game.Role role { get; private set; }
 
-        public GamePlayer(int? id, Game.Role role) : base(id) {
+        public static GamePlayer GetInstance(int? id, Game.Role role)
+        {
+            GamePlayer gamePlayer = new GamePlayer(id, role);
+            if (gamePlayer.id == null) return null;
+            return gamePlayer;
+        }
+
+        private GamePlayer(int? id, Game.Role role) : base(id) {
             this.role = role;
         }
     }

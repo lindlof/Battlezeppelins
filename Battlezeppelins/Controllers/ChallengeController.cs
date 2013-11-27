@@ -22,7 +22,7 @@ namespace Battlezeppelins.Controllers
 
             if (challengeeName != null)
             {
-                challengee = new Player(challengeeName);
+                challengee = Player.GetInstance(challengeeName);
             }
 
             if (challenger != null && challengee != null)

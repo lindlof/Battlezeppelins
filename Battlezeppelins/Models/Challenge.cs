@@ -59,7 +59,7 @@ namespace Battlezeppelins.Models
                         {
                             string name = reader.GetString(reader.GetOrdinal("challenger"));
                             int? id = Int32.Parse(name);
-                            return new Player(id);
+                            return Player.GetInstance(id);
                         }
                     }
                 }

@@ -15,7 +15,7 @@ namespace Battlezeppelins.Controllers
             {
                 string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
                 int? id = Int32.Parse(idStr);
-                return new Player(id);
+                return Player.GetInstance(id);
             }
             return null;
         }
