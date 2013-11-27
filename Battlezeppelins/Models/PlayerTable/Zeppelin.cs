@@ -19,35 +19,68 @@ namespace Battlezeppelins.Models
             this.rotDown = rotDown;
         }
 
+        private List<Point> getPoints()
+        {
+            List<Point> points = new List<Point>();
+            int x = this.x;
+            int y = this.y;
+
+            for (int i = 0; i < this.type.Length; i++)
+            {
+                if (this.rotDown) y--;
+                else x++;
+                Point point = new Point(x, y);
+                points.Add(point);
+            }
+
+            return points;
+        }
+
+        /// <summary>
+        /// Is every point of Zeppelin filled with collisionPoints
+        /// </summary>
+        /// <param name="openPoints"></param>
+        /// <returns></returns>
+        public bool fullyCollides(List<Point> collisionPoints)
+        {
+            foreach (Point zeppelinPoint in this.getPoints())
+            {
+                bool pointCollides = false;
+                foreach (OpenPoint collisionPoint in collisionPoints)
+                {
+                    if (zeppelinPoint.x == collisionPoint.x &&
+                        zeppelinPoint.y == collisionPoint.y)
+                    {
+                        pointCollides = true;
+                        break;
+                    }
+                }
+
+                if (!pointCollides) return false;
+            }
+
+            return true;
+        }
+
         public bool collides(Zeppelin zeppelin)
         {
-            int x = zeppelin.x;
-            int y = zeppelin.y;
-
-            for (int i = 0; i < zeppelin.type.Length; i++)
+            foreach (Point point in zeppelin.getPoints())
             {
-                if (zeppelin.rotDown) y--;
-                else x++;
-
-                if (collides(x, y)) return true;
+                if (collides(point)) return true;
             }
 
             return false;
         }
 
-        public bool collides(int x, int y)
+        public bool collides(Point point)
         {
-            int thisX = this.x;
-            int thisY = this.y;
-
-            for (int i = 0; i < this.type.Length; i++)
+            foreach (Point thisPoint in this.getPoints())
             {
-                if (this.rotDown) thisY--;
-                else thisX++;
-
-                if (thisX == x && thisY == y) return true;
+                if (thisPoint.x == point.x && thisPoint.y == point.y)
+                {
+                    return true;
+                }
             }
-
             return false;
         }
 

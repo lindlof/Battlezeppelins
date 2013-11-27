@@ -179,6 +179,7 @@
     <Compile Include="Models\PlayerTable\OpenPoint.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Data.cs" />
+    <Compile Include="Models\PlayerTable\Point.cs" />
     <Compile Include="Models\PlayerTable\Zeppelin.cs" />
     <Compile Include="Models\PlayerTable\ZeppelinType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

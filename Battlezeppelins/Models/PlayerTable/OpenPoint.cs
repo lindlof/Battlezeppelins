@@ -5,16 +5,12 @@ using System.Web;
 
 namespace Battlezeppelins.Models
 {
-    public class OpenPoint
+    public class OpenPoint : Point
     {
-        public int x { get; private set; }
-        public int y { get; private set; }
         public bool hit { get; private set; }
 
-        public OpenPoint(int x, int y, bool hit)
+        public OpenPoint(int x, int y, bool hit) : base(x, y)
         {
-            this.x = x;
-            this.y = y;
             this.hit = hit;
         }
     }

@@ -25,10 +25,6 @@ namespace Battlezeppelins.Models
             this.zeppelins = new List<Zeppelin>();
         }
 
-        public void removeZeppelins() {
-            zeppelins = null;
-        }
-
         public bool AddZeppelin(Zeppelin newZeppelin)
         {
             foreach (Zeppelin zeppelin in this.zeppelins)
@@ -53,6 +49,20 @@ namespace Battlezeppelins.Models
             this.zeppelins.Add(newZeppelin);
 
             return true;
+        }
+
+        /// <summary>
+        /// Remove all zeppelins that have not been found
+        /// </summary>
+        /// <param name="openPoints"></param>
+        public void removeNonOpenZeppelins() {
+            foreach (Zeppelin zeppelin in zeppelins) {
+                List<Point> points = new List<Point>(this.openPoints);
+                if (!(zeppelin.fullyCollides(points)))
+                {
+                    zeppelins.Remove(zeppelin);
+                }
+            }
         }
     }
 }
