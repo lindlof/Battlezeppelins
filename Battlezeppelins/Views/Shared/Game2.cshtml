@@ -1,0 +1,72 @@
+﻿<div id="game" style="display: none;">
+    <p id="opponent"></p> <input type="button" onclick="surrenderGame()" value="Surrender" />
+</div>
+
+<div class="row">
+  <div class="col-xs-4">
+    <div class="btn-group">
+      <button type="button" class="btn btn-default" onclick="rotation(this)">Up</button>
+      <button type="button" class="btn btn-default" onclick="rotation(this)">Down</button>
+      <button type="button" class="btn btn-default" onclick="rotation(this);">Right</button>
+      <button type="button" class="btn btn-default" onclick="rotation(this);">Left</button>
+    </div>
+  </div>
+  <div class="col-xs-8">
+    <table class="table table-bordered" style="width:400px;">
+      @for(var y = 0; y < 10; y++){
+      <tr style="height:40px">
+        @for(var x = 0; x < 10; x++){
+          <td style="padding:0px;"><button type="button" class="btn btn-info" style="padding:20px;" onclick="handler(@x , @y)"></button></td>
+        }
+      </tr>
+      }
+    </table>
+  </div>
+</div>
+
+
+<script>
+  var ship = function () {
+    var size;
+    var x;
+    var y;
+    var rotation;
+  };
+  ship.prototype.place = function (x,y) {
+    this.x = x;
+    this.y = y;
+
+  };
+  function handler(x,y) {
+    console.log(x, y);
+
+  };
+  function rotation(elem) {
+    $(elem).addClass("active");
+  };
+    function pollGameMetadata() {
+        $.getJSON('@Url.Content("~/Game/Metadata")', function (data) {
+            var div = document.getElementById("game");
+            var text = document.getElementById("opponent");
+            if (data.playing) {
+                text.textContent = "Playing with " + data.opponent;
+                div.style.display = "inline-block";
+            } else {
+                div.style.display = "none";
+            }
+        });
+    }
+    window.setInterval(pollGameMetadata, 5000);
+    pollGameMetadata();
+
+    function surrenderGame() {
+        $.ajax({
+            type: "POST",
+            url: "Game/Surrender",
+            success: function (data) {
+                pollGameMetadata();
+            }
+        });
+    }
+
+</script>

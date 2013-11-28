@@ -299,7 +299,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\UserList.cshtml" />
     <Content Include="Views\Shared\ChallengeInbox.cshtml" />
-    <Content Include="Views\Shared\Game.cshtml" />
+    <Content Include="Views\Shared\Game2.cshtml" />
     <Content Include="Views\Shared\ChatBox.cshtml" />
     <Content Include="Views\Home\Game.cshtml" />
   </ItemGroup>
