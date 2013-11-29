@@ -8,7 +8,9 @@
       @for(var y = 0; y < 10; y++){
       <tr style="height:40px">
         @for(var x = 0; x < 10; x++){
-          <td style="padding:0px;" id="drop_@x@y"><button type="button" class="btn btn-info" style="padding:20px;" onclick="handler(@x , @y)"></button></td>
+          <td style="padding:0px;">
+            <button type="button" id="@x,@y" class="btn btn-info" style="width:40px;height:40px;padding:0px"></button>
+          </td>
         }
       </tr>
       }
@@ -26,45 +28,46 @@
     </div>
     <div class="row">
       <div id="drag">
-        <p>drag me</p>
+        <div class="well well-sm" style="width:60px;" id="ship1">Ship 1</div>
       </div>
     </div>
-
-
   </div>
 </div>
 
-
 <script>
   var ship = function () {
-    var size;
-    var x;
-    var y;
-    var rotation;
+    this.size;
+    this.x;
+    this.y;
+    this.rotation;
   };
   ship.prototype.place = function (x,y) {
     this.x = x;
     this.y = y;
-
   };
 
-  function handler(x,y) {
-    console.log(x, y);
+  var ships = new ship();
+  ships.size = 3;
 
+  var showShip = function () {
+    $("button[id^='" + ships.x + "," + ships.y + "']").text('s1');
+    $("button[id^='" + ships.x + "," + (1 + parseInt(ships.y)) + "']").text('s1');
+    $("button[id^='" + ships.x + "," + (2 + parseInt(ships.y)) + "']").text('s1');
   };
-  
+
   $(function () {
-    $("#drag").draggable({
-      appendTo: "body",
-      helper: "clone"
+    $("#drag div").draggable({
+      appendTo: "body"
     });
+    $("#gameTable button").droppable({
+      drop: function (even, ui) {
+        var xy = $(this).attr('id').split(',');
+        ships.place(xy[0], xy[1]);
+        ui.draggable.remove();
+        showShip();
+      }
+    })
   });
-  $("#gameTable button").droppable({
-    drop: function (even, ui) {
-      $("<button></button>").text(ui.drag.text()).appendTo(this);
-    }
-  });
-
 
   $("button[id^='rotation']").click(function () {
     if ($(this).hasClass("btn-success"))
