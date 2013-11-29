@@ -1,10 +1,4 @@
 ﻿<!DOCTYPE html>
-<script src="/Scripts/jquery-1.7.1.js"></script>
-<script>
-var poller = window.setInterval(function () {
-    $.getJSON('@Url.Content("~/Poll/UpdateLastSeen")', function (data) { });
-}, 60000);
-</script>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -13,6 +7,14 @@ var poller = window.setInterval(function () {
         <meta name="viewport" content="width=device-width" />
         @Styles.Render("~/Content/css/bootstrap.min.css")
         @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jqueryui")
+
+        <script>
+          var poller = window.setInterval(function () {
+            $.getJSON('@Url.Content("~/Poll/UpdateLastSeen")', function (data) { });
+          }, 60000);
+        </script>
     </head>
     <body>
         <header>
@@ -41,7 +43,5 @@ var poller = window.setInterval(function () {
         <footer>
           <!-- :( go away! -->
         </footer>
-        @Scripts.Render("~/bundles/jquery")
-        @RenderSection("scripts", required: false)
     </body>
 </html>

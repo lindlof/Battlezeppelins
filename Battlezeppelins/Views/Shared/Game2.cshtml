@@ -3,24 +3,34 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-4">
-    <div class="btn-group">
-      <button type="button" class="btn btn-default" onclick="rotation(this)">Up</button>
-      <button type="button" class="btn btn-default" onclick="rotation(this)">Down</button>
-      <button type="button" class="btn btn-default" onclick="rotation(this);">Right</button>
-      <button type="button" class="btn btn-default" onclick="rotation(this);">Left</button>
-    </div>
-  </div>
   <div class="col-xs-8">
-    <table class="table table-bordered" style="width:400px;">
+    <table class="table table-bordered" id="gameTable" style="width:400px;">
       @for(var y = 0; y < 10; y++){
       <tr style="height:40px">
         @for(var x = 0; x < 10; x++){
-          <td style="padding:0px;"><button type="button" class="btn btn-info" style="padding:20px;" onclick="handler(@x , @y)"></button></td>
+          <td style="padding:0px;" id="drop_@x@y"><button type="button" class="btn btn-info" style="padding:20px;" onclick="handler(@x , @y)"></button></td>
         }
       </tr>
       }
     </table>
+  </div>
+
+  <div class="col-xs-4">
+    <div class="row">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default" id="rotation1" value="Up">Up</button>
+        <button type="button" class="btn btn-default" id="rotation2" value="Down">Down</button>
+        <button type="button" class="btn btn-default" id="rotation3" value="Right">Right</button>
+        <button type="button" class="btn btn-default" id="rotation4" value="Left">Left</button>
+      </div>
+    </div>
+    <div class="row">
+      <div id="drag">
+        <p>drag me</p>
+      </div>
+    </div>
+
+
   </div>
 </div>
 
@@ -37,36 +47,55 @@
     this.y = y;
 
   };
+
   function handler(x,y) {
     console.log(x, y);
 
   };
-  function rotation(elem) {
-    $(elem).addClass("active");
-  };
-    function pollGameMetadata() {
-        $.getJSON('@Url.Content("~/Game/Metadata")', function (data) {
-            var div = document.getElementById("game");
-            var text = document.getElementById("opponent");
-            if (data.playing) {
-                text.textContent = "Playing with " + data.opponent;
-                div.style.display = "inline-block";
-            } else {
-                div.style.display = "none";
-            }
-        });
+  
+  $(function () {
+    $("#drag").draggable({
+      appendTo: "body",
+      helper: "clone"
+    });
+  });
+  $("#gameTable button").droppable({
+    drop: function (even, ui) {
+      $("<button></button>").text(ui.drag.text()).appendTo(this);
     }
-    window.setInterval(pollGameMetadata, 5000);
-    pollGameMetadata();
+  });
 
-    function surrenderGame() {
-        $.ajax({
-            type: "POST",
-            url: "Game/Surrender",
-            success: function (data) {
-                pollGameMetadata();
-            }
-        });
-    }
+
+  $("button[id^='rotation']").click(function () {
+    if ($(this).hasClass("btn-success"))
+      return;
+    $("button[id^='rotation']").removeClass("btn-success");
+    $(this).addClass("btn-success");
+  });
+  
+  function pollGameMetadata() {
+    $.getJSON('@Url.Content("~/Game/Metadata")', function (data) {
+      var div = document.getElementById("game");
+      var text = document.getElementById("opponent");
+      if (data.playing) {
+        text.textContent = "Playing with " + data.opponent;
+        div.style.display = "inline-block";
+      } else {
+        div.style.display = "none";
+      }
+    });
+  }
+  window.setInterval(pollGameMetadata, 5000);
+  pollGameMetadata();
+
+  function surrenderGame() {
+    $.ajax({
+      type: "POST",
+      url: "Game/Surrender",
+      success: function (data) {
+        pollGameMetadata();
+      }
+    });
+  }
 
 </script>
