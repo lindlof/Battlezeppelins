@@ -15,7 +15,10 @@ namespace Battlezeppelins.Controllers
 
             if (game != null)
             {
-                return Json(new { playing = true, opponent = game.opponent.name }, JsonRequestBehavior.AllowGet);
+                return Json(new { 
+                    playing = true, 
+                    opponent = game.opponent.name,
+                    gameState = game.gameState.ToString() }, JsonRequestBehavior.AllowGet);
             }
             else
             {
@@ -46,15 +49,23 @@ namespace Battlezeppelins.Controllers
             bool rotDown = Boolean.Parse(Request.Form["rotDown"]);
 
             Zeppelin zeppelin = new Zeppelin(type, x, y, rotDown);
-
-            GameTable table = game.GetPlayerTable();
-            bool zeppelinAdded = table.AddZeppelin(zeppelin);
-
-            if (zeppelinAdded) {
-                game.PutTable(table);
-            }
+            bool zeppelinAdded = game.AddZeppelin(zeppelin);
 
             return Json(zeppelinAdded, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetPlayerTable()
+        {
+            Game game = Game.GetInstance(base.GetPlayer());
+            GameTable table = game.GetPlayerTable();
+            return Json(table, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetOpponentTable()
+        {
+            Game game = Game.GetInstance(base.GetPlayer());
+            GameTable table = game.GetOpponentTable();
+            return Json(table, JsonRequestBehavior.AllowGet);
         }
     }
 }

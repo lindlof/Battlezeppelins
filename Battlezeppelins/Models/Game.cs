@@ -14,6 +14,7 @@ namespace Battlezeppelins.Models
         public enum Role { CHALLENGER, CHALLENGEE }
 
         private int id { get; set; }
+        public GameState gameState { get; private set; }
         public GamePlayer player { get; set; }
         public GamePlayer opponent { get; set; }
 
@@ -30,9 +31,11 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "SELECT id, challenger, challengee FROM battlezeppelins.game WHERE gameState = @gameState " + 
+                    myCommand.CommandText = "SELECT id, gameState, challenger, challengee FROM battlezeppelins.game " +
+                        "WHERE (gameState = @gameStatePrep OR gameState = @gameStateProgress) " + 
                         "AND (challenger = @playerId OR challengee = @playerId)";
-                    myCommand.Parameters.AddWithValue("@gameState", (int)GameState.IN_PROGRESS);
+                    myCommand.Parameters.AddWithValue("@gameStatePrep", (int)GameState.PREPARATION);
+                    myCommand.Parameters.AddWithValue("@gameStateProgress", (int)GameState.IN_PROGRESS);
                     myCommand.Parameters.AddWithValue("@playerId", player.id);
                     using (MySqlDataReader reader = myCommand.ExecuteReader())
                     {
@@ -43,21 +46,23 @@ namespace Battlezeppelins.Models
 
                             if (player.id == challengerId)
                             {
-                                GamePlayer gamePlayer = new GamePlayer(challengerId, Game.Role.CHALLENGER);
-                                GamePlayer gameOpponent = new GamePlayer(challengeeId, Game.Role.CHALLENGEE);
+                                GamePlayer gamePlayer = GamePlayer.GetInstance(challengerId, Game.Role.CHALLENGER);
+                                GamePlayer gameOpponent = GamePlayer.GetInstance(challengeeId, Game.Role.CHALLENGEE);
                                 game = new Game(gamePlayer, gameOpponent);
-
-                                int id = reader.GetInt32(reader.GetOrdinal("id"));
-                                game.id = id;
                             }
                             else if (player.id == challengeeId)
                             {
-                                GamePlayer gamePlayer = new GamePlayer(challengeeId, Game.Role.CHALLENGEE);
-                                GamePlayer gameOpponent = new GamePlayer(challengerId, Game.Role.CHALLENGER);
+                                GamePlayer gamePlayer = GamePlayer.GetInstance(challengeeId, Game.Role.CHALLENGEE);
+                                GamePlayer gameOpponent = GamePlayer.GetInstance(challengerId, Game.Role.CHALLENGER);
                                 game = new Game(gamePlayer, gameOpponent);
+                            }
 
+                            if (game != null)
+                            {
                                 int id = reader.GetInt32(reader.GetOrdinal("id"));
                                 game.id = id;
+                                int gameState = reader.GetInt32(reader.GetOrdinal("gameState"));
+                                game.gameState = (GameState)gameState;
                             }
                         }
                     }
@@ -139,9 +144,9 @@ namespace Battlezeppelins.Models
 
         public GameTable GetOpponentTable()
         {
-            GameTable table = GetTable(this.opponent.role);
-            table.removeZeppelins();
-            return table;
+            GameTable opponentTable = GetTable(this.opponent.role);
+            opponentTable.removeNonOpenZeppelins();
+            return opponentTable;
         }
 
         private GameTable GetTable(Role role)
@@ -155,7 +160,7 @@ namespace Battlezeppelins.Models
 
             try
             {
-                myCommand.CommandText = "SELECT " + tableName + " FROM battlezeppelins.game WHERE gameId = @gameId";
+                myCommand.CommandText = "SELECT " + tableName + " FROM battlezeppelins.game WHERE id = @gameId";
                 myCommand.Parameters.AddWithValue("@gameId", this.id);
                 using (MySqlDataReader reader = myCommand.ExecuteReader())
                 {
@@ -175,7 +180,7 @@ namespace Battlezeppelins.Models
             return null;
         }
 
-        public void PutTable(GameTable table)
+        private void PutTable(GameTable table)
         {
             string tableStr = new JavaScriptSerializer().Serialize(table);
 
@@ -195,6 +200,57 @@ namespace Battlezeppelins.Models
             finally
             {
                 conn.Close();
+            }
+        }
+
+        private void SetState(GameState state)
+        {
+            MySqlConnection conn = new MySqlConnection(
+            ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+
+            try
+            {
+                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @state";
+                myCommand.Parameters.AddWithValue("@state", state);
+                myCommand.ExecuteNonQuery();
+
+                this.gameState = state;
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+        public bool AddZeppelin(Zeppelin zeppelin)
+        {
+            GameTable table = this.GetPlayerTable();
+            bool zeppelinAdded = table.AddZeppelin(zeppelin);
+
+            if (zeppelinAdded)
+            {
+                this.PutTable(table);
+                this.CheckGameState();
+            }
+
+            return zeppelinAdded;
+        }
+
+        public void CheckGameState()
+        {
+            if (gameState == GameState.PREPARATION)
+            {
+                GameTable table = this.GetPlayerTable();
+                if (table.zeppelins.Count == 3)
+                {
+                    GameTable opponentTable = this.GetOpponentTable();
+                    if (opponentTable.zeppelins.Count == 3)
+                    {
+                        this.SetState(Game.GameState.IN_PROGRESS);
+                    }
+                }
             }
         }
     }

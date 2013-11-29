@@ -12,11 +12,22 @@ namespace Battlezeppelins.Models
         public string name { get; set; }
         public int? id { get; set; }
 
-        public Player(int? id)
+        public static Player GetInstance(int? id)
         {
-            this.id = id;
-            name = null;
+            Player player = new Player(id);
+            if (player.id == null) return null;
+            return player;
+        }
 
+        public static Player GetInstance(string name)
+        {
+            Player player = new Player(name);
+            if (player.id == null) return null;
+            return player;
+        }
+
+        protected Player(int? id)
+        {
             if (id != null)
             {
                 MySqlConnection conn = new MySqlConnection(
@@ -32,6 +43,7 @@ namespace Battlezeppelins.Models
                     {
                         if (reader.Read())
                         {
+                            this.id = id;
                             this.name = reader.GetString(reader.GetOrdinal("name"));
                         }
                     }
@@ -43,11 +55,8 @@ namespace Battlezeppelins.Models
             }
         }
 
-        public Player(string name)
+        private Player(string name)
         {
-            this.name = name;
-            id = null;
-
             if (name != null)
             {
                 MySqlConnection conn = new MySqlConnection(
@@ -64,6 +73,7 @@ namespace Battlezeppelins.Models
                         if (reader.Read())
                         {
                             this.id = reader.GetInt32(reader.GetOrdinal("id"));
+                            this.name = name;
                         }
                     }
                 }
