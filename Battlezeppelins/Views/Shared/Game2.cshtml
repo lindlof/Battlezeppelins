@@ -39,7 +39,7 @@
 </div>
 
 <script>
-  var ship = function (size, name) {
+  function Ship(size, name) {
     this.id = name;
     this.name = name;
     this.sname = name.substring(0, 3);
@@ -47,19 +47,27 @@
     this.x;
     this.y;
     this.rotation;
+
+    this.place = function (x,y) {
+        this.x = x;
+        this.y = y;
+    };
   };
-  ship.prototype.place = function (x,y) {
-    this.x = x;
-    this.y = y;
+
+  function ShipList() {
+    this.list = [
+      @foreach (var item in Model.zeppelinType)
+      {
+        @* { ship : new ship(x,"z") }, *@
+        @Html.Raw("      { \"ship\" : new Ship(" + @item.Length + ", \"" + @item.Name + "\") }, \n")
+      }
+    ];
+
+    this.get = function(shipId) {
+      return $.grep(this.list, function (e) { return e.ship.id == shipId; })[0].ship;
+    }
   };
-  
-  var ships = [
-  @foreach (var item in Model.zeppelinType)
-  {
-  @* { ship : new ship(x,"z") }, *@
-  @Html.Raw("  { \"ship\" : new ship(" + @item.Length + ", \"" + @item.Name + "\") },")
-  }
-  ];
+  var ships = new ShipList();
 
   var showShip = function (ship) {
     for(var i = 0; i < ship.size; i++) {
@@ -75,7 +83,7 @@
       drop: function (even, ui) {
         var xy = $(this).attr('id').split(',');
         var shipId = $(ui.draggable).attr("id");
-        var ship = $.grep(ships, function (e) { return e.ship.id == shipId; })[0].ship;
+        var ship = ships.get(shipId);
         ship.place(xy[0], xy[1]);
         ui.draggable.remove();
         showShip(ship);
