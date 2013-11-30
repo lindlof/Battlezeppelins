@@ -58,7 +58,7 @@
     this.list = [
       @foreach (var item in Model.zeppelinType)
       {
-        @* { ship : new ship(x,"z") }, *@
+        @* { "ship" : new ship(x,"z") }, *@
         @Html.Raw("      { \"ship\" : new Ship(" + @item.Length + ", \"" + @item.Name + "\") }, \n")
       }
     ];
