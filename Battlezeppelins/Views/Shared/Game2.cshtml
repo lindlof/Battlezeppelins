@@ -1,4 +1,5 @@
-﻿<div id="game" style="display: none;">
+﻿@model Battlezeppelins.Models.Data
+<div id="game" style="display: none;">
     <p id="opponent"></p> <input type="button" onclick="surrenderGame()" value="Surrender" />
 </div>
 
@@ -28,15 +29,21 @@
     </div>
     <div class="row">
       <div id="drag">
-        <div class="well well-sm" style="width:60px;" id="ship1">Ship 1</div>
+        @foreach (var item in Model.zeppelinType)
+        {
+          <div class="well well-sm" style="width:60px;" id="@item.Name">@item.Name</div>
+        }
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  var ship = function () {
-    this.size;
+  var ship = function (size, name) {
+    this.id = name;
+    this.name = name;
+    this.sname = name.substring(0, 3);
+    this.size = size;
     this.x;
     this.y;
     this.rotation;
@@ -45,14 +52,19 @@
     this.x = x;
     this.y = y;
   };
+  
+  var ships = [
+  @foreach (var item in Model.zeppelinType)
+  {
+  @* { ship : new ship(x,"z") }, *@
+  @Html.Raw("  { \"ship\" : new ship(" + @item.Length + ", \"" + @item.Name + "\") },")
+  }
+  ];
 
-  var ships = new ship();
-  ships.size = 3;
-
-  var showShip = function () {
-    $("button[id^='" + ships.x + "," + ships.y + "']").text('s1');
-    $("button[id^='" + ships.x + "," + (1 + parseInt(ships.y)) + "']").text('s1');
-    $("button[id^='" + ships.x + "," + (2 + parseInt(ships.y)) + "']").text('s1');
+  var showShip = function (ship) {
+    for(var i = 0; i < ship.size; i++) {
+        $("button[id^='" + ship.x + "," + (i + parseInt(ship.y)) + "']").text(ship.sname);
+    }
   };
 
   $(function () {
@@ -62,9 +74,11 @@
     $("#gameTable button").droppable({
       drop: function (even, ui) {
         var xy = $(this).attr('id').split(',');
-        ships.place(xy[0], xy[1]);
+        var shipId = $(ui.draggable).attr("id");
+        var ship = $.grep(ships, function (e) { return e.ship.id == shipId; })[0].ship;
+        ship.place(xy[0], xy[1]);
         ui.draggable.remove();
-        showShip();
+        showShip(ship);
       }
     })
   });

@@ -32,9 +32,7 @@ namespace Battlezeppelins.Controllers
                 player.StatusUpdate();
             }
 
-            Data playerData = new Data();
-            playerData.player = player;
-            playerData.activePlayers = Player.GetActivePlayers();
+            Data playerData = new Data(player);
 
             return View(playerData);
         }
@@ -75,8 +73,9 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult Game()
         {
+            Data playerData = new Data(base.GetPlayer());
 
-          return View();
+            return View(playerData);
         }
     }
 }
