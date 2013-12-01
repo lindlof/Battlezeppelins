@@ -4,8 +4,22 @@
 </div>
 
 <div class="row">
-  <div class="col-xs-8">
-    <table class="table table-bordered" id="gameTable" style="width:400px;">
+  <div class="col-xs-8" id="gameTable">
+    <table class="table table-bordered"  style="width:400px;">
+      @for(var y = 0; y < 10; y++){
+      <tr style="height:40px">
+        @for(var x = 0; x < 10; x++){
+          <td style="padding:0px;">
+            <button type="button" id="@x,@y" class="btn btn-info" style="width:40px;height:40px;padding:0px"></button>
+          </td>
+        }
+      </tr>
+      }
+    </table>
+  </div>
+
+  <div class="col-xs-8" id="gameTable2">
+    <table class="table table-bordered" style="width:400px;">
       @for(var y = 0; y < 10; y++){
       <tr style="height:40px">
         @for(var x = 0; x < 10; x++){
@@ -20,18 +34,23 @@
 
   <div class="col-xs-4">
     <div class="row">
-      <div class="btn-group">
+      <div class="btn-group btn-group-justified">
+        <a type="button" class="btn btn-success" id="continue" disabled>Continue</a>
+        <a type="button" class="btn btn-danger" id="reset" onclick="ships.reset()">Reset</a>
+      </div>
+      <div class="btn-group" style="padding-top:10px">
         <button type="button" class="btn btn-default" id="rotation1" value="Up">Up</button>
         <button type="button" class="btn btn-default" id="rotation2" value="Down">Down</button>
         <button type="button" class="btn btn-default" id="rotation3" value="Right">Right</button>
         <button type="button" class="btn btn-default" id="rotation4" value="Left">Left</button>
       </div>
     </div>
-    <div class="row">
+    <div class="row" style="padding-top:10px;">
       <div id="drag">
         @foreach (var item in Model.zeppelinType)
         {
-          <div class="well well-sm" style="width:60px;" id="@item.Name">@item.Name</div>
+          var length = item.Length * 40 + "px";
+          <div class="well well-sm" style="width:@length;" id="@item.Name">@item.Name</div>
         }
       </div>
     </div>
@@ -62,9 +81,34 @@
         @Html.Raw("      { \"ship\" : new Ship(" + @item.Length + ", \"" + @item.Name + "\") }, \n")
       }
     ];
-
     this.get = function(shipId) {
       return $.grep(this.list, function (e) { return e.ship.id == shipId; })[0].ship;
+    }
+    this.allSet = function(){
+      var set = false;
+      $.each(this.list, function (i, ship) {
+        if (typeof ship.ship.x === "undefined")
+          return set = false;
+        return set = true;
+      });
+      return set;
+    }
+    this.reset = function () {
+      $("#continue").attr("disabled", true);
+      $("#drag").empty();
+      $.each(this.list, function (i, ship) {
+        for (var i = 0; i < ship.ship.size; i++)
+          $("button[id^='" + ship.ship.x + "," + (i + parseInt(ship.ship.y)) + "']").text('');
+        ship.ship.x = "undefined";
+        ship.ship.y = "undefined";
+        $("#drag").append('<div class="well well-sm" style="width:' +
+                          ship.ship.size * 40 + 'px;" id="' + ship.ship.name +
+                          '">' + ship.ship.name + '</div>');
+        $("#drag div").draggable({
+          appendTo: "body",
+          cursorAt: { top: 0, left: 0 }
+        });
+      });
     }
   };
   var ships = new ShipList();
@@ -77,9 +121,11 @@
 
   $(function () {
     $("#drag div").draggable({
-      appendTo: "body"
+      appendTo: "body",
+      cursorAt: { top: 0, left: 0 }
     });
     $("#gameTable button").droppable({
+      tolerance: "pointer",
       drop: function (even, ui) {
         var xy = $(this).attr('id').split(',');
         var shipId = $(ui.draggable).attr("id");
@@ -87,6 +133,8 @@
         ship.place(xy[0], xy[1]);
         ui.draggable.remove();
         showShip(ship);
+        if (ships.allSet())
+          $("#continue").attr("disabled",false);
       }
     })
   });
@@ -96,6 +144,10 @@
       return;
     $("button[id^='rotation']").removeClass("btn-success");
     $(this).addClass("btn-success");
+  });
+
+  $(document).ready(function () {
+    $("#gameTable2").hide();
   });
   
   function pollGameMetadata() {
