@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Runtime.CompilerServices;
 using Battlezeppelins.Models;
 
 namespace Battlezeppelins.Controllers
@@ -12,7 +11,6 @@ namespace Battlezeppelins.Controllers
     {
         private static List<Player> playerList = new List<Player>();
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public Player GetPlayer()
         {
             if (Request.Cookies["userInfo"] != null)
@@ -20,20 +18,27 @@ namespace Battlezeppelins.Controllers
                 string idStr = Server.HtmlEncode(Request.Cookies["userInfo"]["id"]);
                 int id = Int32.Parse(idStr);
 
-                Player player = null;
-                foreach (Player listPlayer in playerList) {
-                    if (listPlayer.id == id) {
-                        player = listPlayer;
-                    }
-                }
+                Player player = SearchPlayer(id);
+                if (player != null) return player;
 
-                if (player == null)
+                lock (playerList)
                 {
+                    player = SearchPlayer(id);
+                    if (player != null) return player;
+
                     Player newPlayer = Player.GetInstance(id);
                     playerList.Add(newPlayer);
                     return newPlayer;
-                } else {
-                    return player;
+                }
+            }
+            return null;
+        }
+
+        private Player SearchPlayer(int id)
+        {
+            foreach (Player listPlayer in playerList) {
+                if (listPlayer.id == id) {
+                    return listPlayer;
                 }
             }
             return null;
