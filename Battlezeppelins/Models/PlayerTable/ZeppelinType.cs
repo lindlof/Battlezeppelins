@@ -47,5 +47,19 @@ namespace Battlezeppelins.Models
         {
             return name;
         }
+
+        public override bool Equals(object zeppelin) {
+            return this == (ZeppelinType)zeppelin;
+        }
+
+        public static bool operator==(ZeppelinType z1, ZeppelinType z2)
+        {
+            return z1.name == z2.name;
+        }
+
+        public static bool operator !=(ZeppelinType z1, ZeppelinType z2)
+        {
+            return z1.name != z2.name;
+        }
     }
 }
