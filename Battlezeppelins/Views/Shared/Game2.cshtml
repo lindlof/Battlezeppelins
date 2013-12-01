@@ -1,57 +1,68 @@
 ﻿@model Battlezeppelins.Models.Data
-<div id="game" style="display: none;">
-    <p id="opponent"></p> <input type="button" onclick="surrenderGame()" value="Surrender" />
-</div>
 
-<div class="row">
-  <div class="col-xs-8" id="gameTable">
-    <table class="table table-bordered"  style="width:400px;">
-      @for(var y = 0; y < 10; y++){
-      <tr style="height:40px">
-        @for(var x = 0; x < 10; x++){
-          <td style="padding:0px;">
-            <button type="button" id="@x,@y" class="btn btn-info" style="width:40px;height:40px;padding:0px"></button>
-          </td>
+<div class="row" style="padding-top:20px;">
+  <div class="col-xs-8" style="padding-left:200px">
+    <div class="gameEnemy" id="enemyTable" style="z-index:100">
+      <table class="table table-bordered">
+        @for(var y = 0; y < 10; y++){
+        <tr>
+          @for(var x = 0; x < 10; x++){
+            <td style="padding:0px;">
+              <button type="button" id="@x,@y" class="btn btn-info"></button>
+            </td>
+          }
+        </tr>
         }
-      </tr>
-      }
-    </table>
-  </div>
+      </table>
+    </div>
 
-  <div class="col-xs-8" id="gameTable2">
-    <table class="table table-bordered" style="width:400px;">
-      @for(var y = 0; y < 10; y++){
-      <tr style="height:40px">
-        @for(var x = 0; x < 10; x++){
-          <td style="padding:0px;">
-            <button type="button" id="@x,@y" class="btn btn-info" style="width:40px;height:40px;padding:0px"></button>
-          </td>
-        }
-      </tr>
-      }
-    </table>
+    <div class="game" id="gameTable">
+      <div class="" id="owngameTable">
+        <table class="table table-bordered">
+          @for(var y = 0; y < 10; y++){
+          <tr style="padding:0px">
+            @for(var x = 0; x < 10; x++){
+              <td style="padding:0px;padding-bottom:2px">
+                <button type="button" id="@x,@y" class="btn btn-info"></button>
+              </td>
+            }
+          </tr>
+          }
+        </table>
+      </div>
+    </div>
   </div>
 
   <div class="col-xs-4">
-    <div class="row">
-      <div class="btn-group btn-group-justified">
-        <a type="button" class="btn btn-success" id="continue" disabled>Continue</a>
-        <a type="button" class="btn btn-danger" id="reset" onclick="ships.reset()">Reset</a>
+    <div class="row" id="game" style="display: none;">
+      <div class="col-xs-8">
+        <h4 class="text-primary" id="opponent"></h4> 
       </div>
-      <div class="btn-group" style="padding-top:10px">
-        <button type="button" class="btn btn-default" id="rotation1" value="Up">Up</button>
-        <button type="button" class="btn btn-default" id="rotation2" value="Down">Down</button>
-        <button type="button" class="btn btn-default" id="rotation3" value="Right">Right</button>
-        <button type="button" class="btn btn-default" id="rotation4" value="Left">Left</button>
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-danger" onclick="surrenderGame()">Surrender</button>
       </div>
     </div>
-    <div class="row" style="padding-top:10px;">
-      <div id="drag">
-        @foreach (var item in Model.zeppelinType)
-        {
-          var length = item.Length * 40 + "px";
-          <div class="well well-sm" style="width:@length;" id="@item.Name">@item.Name</div>
-        }
+    <div id="placement">
+      <div class="row">
+        <div class="btn-group btn-group-justified">
+          <a type="button" class="btn btn-success" id="continue" disabled="true">Continue</a>
+          <a type="button" class="btn btn-danger" id="reset" onclick="ships.reset()">Reset</a>
+        </div>
+        <div class="btn-group" style="padding-top:10px">
+          <button type="button" class="btn btn-default" id="rotation1" value="Up">Up</button>
+          <button type="button" class="btn btn-default" id="rotation2" value="Down">Down</button>
+          <button type="button" class="btn btn-default" id="rotation3" value="Right">Right</button>
+          <button type="button" class="btn btn-default" id="rotation4" value="Left">Left</button>
+        </div>
+      </div>
+      <div class="row" style="padding-top:10px;">
+        <div id="drag">
+          @foreach (var item in Model.zeppelinType)
+          {
+            var length = item.Length * 40 + "px";
+            <div class="well well-sm" style="width:@length;" id="@item.Name">@item.Name</div>
+          }
+        </div>
       </div>
     </div>
   </div>
@@ -70,6 +81,18 @@
     this.place = function (x,y) {
         this.x = x;
         this.y = y;
+    };
+
+    this.safe = function () {
+      var ship = this;
+      $.ajax({
+        type: "POST",
+        url: '@Url.Content("~/Game/AddZeppelin")',
+        data: {
+          type: ship.name,x: ship.x, y: ship.y,
+          rotDown: false
+        }
+      });
     };
   };
 
@@ -98,7 +121,7 @@
       $("#drag").empty();
       $.each(this.list, function (i, ship) {
         for (var i = 0; i < ship.ship.size; i++)
-          $("button[id^='" + ship.ship.x + "," + (i + parseInt(ship.ship.y)) + "']").text('');
+          $("#gameTable  button[id^='" + ship.ship.x + "," + (i + parseInt(ship.ship.y)) + "']").text('');
         ship.ship.x = "undefined";
         ship.ship.y = "undefined";
         $("#drag").append('<div class="well well-sm" style="width:' +
@@ -110,14 +133,33 @@
         });
       });
     }
+    this.safeAll = function () {
+      $.each(this.list, function (i, ship) {
+        ship.ship.safe();
+      });
+    };
   };
   var ships = new ShipList();
 
+  $("#enemyTable button").click(function () {
+    $(this).addClass("usedSlot");
+    $(this).attr("disabled", true);
+  });
+
   var showShip = function (ship) {
     for(var i = 0; i < ship.size; i++) {
-        $("button[id^='" + ship.x + "," + (i + parseInt(ship.y)) + "']").text(ship.sname);
+      $("#gameTable button[id^='" + ship.x + "," + (i + parseInt(ship.y)) + "']").text(ship.sname);
     }
   };
+  $("#continue").click(function () {
+    $("#placement").hide();
+    $("#enemyTable").show();
+    ships.safeAll();
+    $("#gameTable").removeClass("game").addClass("gameOwn");
+    $("#owngameTable").addClass("gameOwn2");
+    $("#gameTable button").attr("disabled",true);
+  });
+
 
   $(function () {
     $("#drag div").draggable({
@@ -147,7 +189,7 @@
   });
 
   $(document).ready(function () {
-    $("#gameTable2").hide();
+    $("#enemyTable").hide();
   });
   
   function pollGameMetadata() {

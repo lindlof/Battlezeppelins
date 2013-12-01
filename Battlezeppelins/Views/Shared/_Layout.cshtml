@@ -15,6 +15,66 @@
             $.getJSON('@Url.Content("~/Poll/UpdateLastSeen")', function (data) { });
           }, 60000);
         </script>
+        <style>
+        .col-centered {
+            float: none;
+            margin: 0 auto;
+        }
+        .game table {
+          width:400px;
+        }
+        .game td { 
+          height:40px;
+        }
+        .game button {
+          width:40px;
+          height:40px;
+          padding:0px;
+        }
+        .gameEnemy {
+          position:relative;
+          padding-left:50px;
+        }
+        .gameEnemy table {
+          width:500px;
+        }
+        .gameEnemy td { 
+          height:40px;
+        }
+        .gameEnemy button {
+          width:50px;
+          height:40px;
+          padding:0px;
+        }
+        .gameOwn {
+          position:relative;
+          top:-215px;
+          width:600px;
+          perspective:300px;
+          -webkit-perspective:800px; /* Safari and Chrome */
+        }
+        .gameOwn2 {
+          transform: rotateX(50deg);
+          -webkit-transform: rotateX(60deg);
+        }
+        .gameOwn table {
+          width:600px;
+        }
+        .gameOwn td { 
+          height:60px;
+        }
+        .gameOwn button {
+          width:60px;
+          height:60px;
+          padding:0px;
+        }
+        .usedSlot {
+          background-image: url('/images/redcross.png');
+          background-repeat:no-repeat;
+          background-position:center;
+          background-size:contain;
+        }
+        </style>
     </head>
     <body>
         <header>

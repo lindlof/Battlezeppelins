@@ -51,7 +51,7 @@ namespace Battlezeppelins.Controllers
             Zeppelin zeppelin = new Zeppelin(type, x, y, rotDown);
             bool zeppelinAdded = game.AddZeppelin(zeppelin);
 
-            return Json(zeppelinAdded, JsonRequestBehavior.AllowGet);
+            return Json(new {r = true}, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetPlayerTable()
