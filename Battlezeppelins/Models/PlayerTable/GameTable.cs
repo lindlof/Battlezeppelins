@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Script.Serialization;
 
 namespace Battlezeppelins.Models
 {
@@ -23,6 +24,26 @@ namespace Battlezeppelins.Models
 
             this.openPoints = new List<OpenPoint>();
             this.zeppelins = new List<Zeppelin>();
+        }
+
+        public GameTable(string serialized)
+        {
+            GameTable deserialized = new JavaScriptSerializer().Deserialize<GameTable>(serialized);
+            this.role = deserialized.role;
+            this.openPoints = deserialized.openPoints;
+            this.zeppelins = deserialized.zeppelins;
+
+            if (this.openPoints == null) {
+                this.openPoints = new List<OpenPoint>();
+            }
+            if (this.zeppelins == null) {
+                this.zeppelins = new List<Zeppelin>();
+            }
+        }
+
+        public string serialize()
+        {
+            return new JavaScriptSerializer().Serialize(this);
         }
 
         public bool AddZeppelin(Zeppelin newZeppelin)

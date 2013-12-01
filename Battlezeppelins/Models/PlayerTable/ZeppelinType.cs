@@ -21,6 +21,14 @@ namespace Battlezeppelins.Models
             }
         }
 
+        public static ZeppelinType getByName(string name) {
+            foreach (ZeppelinType type in Values)
+            {
+                if (type.Name == name) return type;
+            }
+            return null;
+        }
+
         private readonly string name;
         private readonly int length;
 

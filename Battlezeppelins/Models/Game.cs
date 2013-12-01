@@ -4,7 +4,6 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using MySql.Data.MySqlClient;
-using System.Web.Script.Serialization;
 
 namespace Battlezeppelins.Models
 {
@@ -110,8 +109,8 @@ namespace Battlezeppelins.Models
                 GameTable challengerTable = new GameTable(Role.CHALLENGER);
                 GameTable challengeeTable = new GameTable(Role.CHALLENGEE);
 
-                string challengerTableStr = new JavaScriptSerializer().Serialize(challengerTable);
-                string challengeeTableStr = new JavaScriptSerializer().Serialize(challengeeTable);
+                string challengerTableStr = challengerTable.serialize();
+                string challengeeTableStr = challengeeTable.serialize();
 
                 MySqlConnection conn = new MySqlConnection(
                 ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
@@ -167,7 +166,7 @@ namespace Battlezeppelins.Models
                     if (reader.Read())
                     {
                         string gameTablesStr = reader.GetString(reader.GetOrdinal(tableName));
-                        GameTable  table = new JavaScriptSerializer().Deserialize<GameTable>(gameTablesStr);
+                        GameTable table = new GameTable(gameTablesStr);
                         return table;
                     }
                 }
@@ -182,7 +181,7 @@ namespace Battlezeppelins.Models
 
         private void PutTable(GameTable table)
         {
-            string tableStr = new JavaScriptSerializer().Serialize(table);
+            string tableStr = table.serialize();
 
             MySqlConnection conn = new MySqlConnection(
             ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
