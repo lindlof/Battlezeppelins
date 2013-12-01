@@ -50,12 +50,26 @@
           position:relative;
           top:-215px;
           width:600px;
-          perspective:300px;
+
+          perspective:800px;
           -webkit-perspective:800px; /* Safari and Chrome */
+          
         }
         .gameOwn2 {
-          transform: rotateX(50deg);
-          -webkit-transform: rotateX(60deg);
+          animation-duration: 2s;
+          animation-name: changePos;
+          animation-fill-mode: forwards;
+          -webkit-animation-duration: 2s;
+          -webkit-animation-name: changePos;
+          -webkit-animation-fill-mode: forwards;
+        }
+        @@-moz-keyframes changePos {
+          0% { transform: rotate(0deg) scale(.4);}
+          100% { transform: rotateX(60deg) scale(1);}
+        }
+        @@-webkit-keyframes changePos {
+          0% { -webkit-transform: rotate(0deg) scale(.4);}
+          100% { -webkit-transform: rotateX(60deg) scale(1);}
         }
         .gameOwn table {
           width:600px;
