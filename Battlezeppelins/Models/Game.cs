@@ -166,7 +166,7 @@ namespace Battlezeppelins.Models
                     if (reader.Read())
                     {
                         string gameTablesStr = reader.GetString(reader.GetOrdinal(tableName));
-                        GameTable table = new GameTable(gameTablesStr);
+                        GameTable table = GameTable.deserialize(gameTablesStr);
                         return table;
                     }
                 }

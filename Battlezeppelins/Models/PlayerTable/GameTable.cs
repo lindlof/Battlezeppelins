@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace Battlezeppelins.Models
 {
@@ -12,11 +12,14 @@ namespace Battlezeppelins.Models
         public const int TABLE_ROWS = 10;
         public const int TABLE_COLS = 10;
 
+        [JsonProperty]
         public Game.Role role { get; private set; }
+        [JsonProperty]
         public List<OpenPoint> openPoints { get; private set; }
+        [JsonProperty]
         public List<Zeppelin> zeppelins { get; private set; }
 
-        public GameTable() { }
+        private GameTable() { }
 
         public GameTable(Game.Role role)
         {
@@ -26,24 +29,20 @@ namespace Battlezeppelins.Models
             this.zeppelins = new List<Zeppelin>();
         }
 
-        public GameTable(string serialized)
+        public static GameTable deserialize(string serialized)
         {
-            GameTable deserialized = new JavaScriptSerializer().Deserialize<GameTable>(serialized);
-            this.role = deserialized.role;
-            this.openPoints = deserialized.openPoints;
-            this.zeppelins = deserialized.zeppelins;
+            var settings = new JsonSerializerSettings
+            {
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            };
+            GameTable deserialized = JsonConvert.DeserializeObject<GameTable>(serialized, settings);
 
-            if (this.openPoints == null) {
-                this.openPoints = new List<OpenPoint>();
-            }
-            if (this.zeppelins == null) {
-                this.zeppelins = new List<Zeppelin>();
-            }
+            return deserialized;
         }
 
         public string serialize()
         {
-            return new JavaScriptSerializer().Serialize(this);
+            return JsonConvert.SerializeObject(this);
         }
 
         public bool AddZeppelin(Zeppelin newZeppelin)

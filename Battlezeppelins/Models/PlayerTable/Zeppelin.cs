@@ -2,15 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace Battlezeppelins.Models
 {
     public class Zeppelin
     {
+        [JsonProperty]
         public ZeppelinType type { get; private set; }
+        [JsonProperty]
         public int x { get; private set; }
+        [JsonProperty]
         public int y { get; private set; }
+        [JsonProperty]
         public bool rotDown { get; private set; }
+
+        private Zeppelin() { }
 
         public Zeppelin(ZeppelinType type, int x, int y, bool rotDown) {
             this.type = type;
@@ -25,7 +32,7 @@ namespace Battlezeppelins.Models
             int x = this.x;
             int y = this.y;
 
-            for (int i = 0; i < this.type.Length; i++)
+            for (int i = 0; i < this.type.length; i++)
             {
                 if (this.rotDown) y--;
                 else x++;
@@ -87,13 +94,13 @@ namespace Battlezeppelins.Models
         public int getWidth()
         {
             if (this.rotDown) return 1;
-            else return this.type.Length;
+            else return this.type.length;
         }
 
         public int getHeight()
         {
             if (!this.rotDown) return 1;
-            else return this.type.Length;
+            else return this.type.length;
         }
     }
 }

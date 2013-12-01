@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace Battlezeppelins.Models
 {
@@ -24,23 +25,23 @@ namespace Battlezeppelins.Models
         public static ZeppelinType getByName(string name) {
             foreach (ZeppelinType type in Values)
             {
-                if (type.Name == name) return type;
+                if (type.name == name) return type;
             }
             return null;
         }
 
-        private readonly string name;
-        private readonly int length;
+        [JsonProperty]
+        public string name { get; private set; }
+        [JsonProperty]
+        public int length { get; private set; }
+
+        private ZeppelinType() { }
 
         ZeppelinType(string name, int length)
         {
             this.name = name;
             this.length = length;
         }
-
-        public string Name { get { return name; } }
-
-        public int Length { get { return length; } }
 
         public override string ToString()
         {
