@@ -40,16 +40,21 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult AddZeppelin()
         {
-            Game game = Game.GetInstance(base.GetPlayer());
-
             string typeStr = Request.Form["type"];
             ZeppelinType type = ZeppelinType.getByName(typeStr);
             int x = Int32.Parse(Request.Form["x"]);
             int y = Int32.Parse(Request.Form["y"]);
             bool rotDown = Boolean.Parse(Request.Form["rotDown"]);
 
+            Player player = base.GetPlayer();
             Zeppelin zeppelin = new Zeppelin(type, x, y, rotDown);
-            bool zeppelinAdded = game.AddZeppelin(zeppelin);
+
+            bool zeppelinAdded;
+            lock (player)
+            {
+                Game game = Game.GetInstance(player);
+                zeppelinAdded = game.AddZeppelin(zeppelin);
+            }
 
             return Json(zeppelinAdded, JsonRequestBehavior.AllowGet);
         }
