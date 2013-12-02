@@ -11,33 +11,30 @@ namespace Battlezeppelins.Models
         [JsonProperty]
         public ZeppelinType type { get; private set; }
         [JsonProperty]
-        public int x { get; private set; }
-        [JsonProperty]
-        public int y { get; private set; }
+        public Point location { get; private set; }
         [JsonProperty]
         public bool rotDown { get; private set; }
 
         private Zeppelin() { }
 
-        public Zeppelin(ZeppelinType type, int x, int y, bool rotDown) {
+        public Zeppelin(ZeppelinType type, Point location, bool rotDown) {
             this.type = type;
-            this.x = x;
-            this.y = y;
+            this.location = location;
             this.rotDown = rotDown;
         }
 
         private List<Point> getPoints()
         {
             List<Point> points = new List<Point>();
-            int x = this.x;
-            int y = this.y;
+            int x = this.location.x;
+            int y = this.location.y;
 
             for (int i = 0; i < this.type.length; i++)
             {
-                if (this.rotDown) y--;
-                else x++;
                 Point point = new Point(x, y);
                 points.Add(point);
+                if (this.rotDown) y++;
+                else x++;
             }
 
             return points;
@@ -71,7 +68,8 @@ namespace Battlezeppelins.Models
 
         public bool collides(Zeppelin zeppelin)
         {
-            foreach (Point point in zeppelin.getPoints())
+            List<Point> points = zeppelin.getPoints();
+            foreach (Point point in points)
             {
                 if (collides(point)) return true;
             }
@@ -81,7 +79,8 @@ namespace Battlezeppelins.Models
 
         public bool collides(Point point)
         {
-            foreach (Point thisPoint in this.getPoints())
+            List<Point> points = this.getPoints();
+            foreach (Point thisPoint in points)
             {
                 if (thisPoint.x == point.x && thisPoint.y == point.y)
                 {

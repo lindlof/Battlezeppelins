@@ -58,10 +58,13 @@ namespace Battlezeppelins.Models
                     return false;
             }
 
-            if (newZeppelin.x < 0 ||
-                newZeppelin.x + newZeppelin.getWidth()-1 > TABLE_COLS - 1 ||
-                newZeppelin.y < 0 ||
-                newZeppelin.y + newZeppelin.getHeight()-1 > TABLE_ROWS - 1)
+            int x = newZeppelin.location.x;
+            int y = newZeppelin.location.y;
+            int w = newZeppelin.getWidth();
+            int h = newZeppelin.getHeight();
+            // Zeppelin must be in the table
+            if (x < 0 || x + w -1 > TABLE_COLS - 1 ||
+                y < 0 || y + h -1 > TABLE_ROWS - 1)
             {
                 return false;
             }

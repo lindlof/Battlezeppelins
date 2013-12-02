@@ -47,7 +47,7 @@ namespace Battlezeppelins.Controllers
             bool rotDown = Boolean.Parse(Request.Form["rotDown"]);
 
             Player player = base.GetPlayer();
-            Zeppelin zeppelin = new Zeppelin(type, x, y, rotDown);
+            Zeppelin zeppelin = new Zeppelin(type, new Point(x, y), rotDown);
 
             bool zeppelinAdded;
             lock (player)
