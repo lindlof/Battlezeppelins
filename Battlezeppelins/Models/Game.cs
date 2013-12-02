@@ -155,18 +155,22 @@ namespace Battlezeppelins.Models
             MySqlCommand myCommand = conn.CreateCommand();
             conn.Open();
 
-            string tableName = (role == Role.CHALLENGER) ? "challengerTable" : "challengeeTable";
+            string columnName = (role == Role.CHALLENGER) ? "challengerTable" : "challengeeTable";
 
             try
             {
-                myCommand.CommandText = "SELECT " + tableName + " FROM battlezeppelins.game WHERE id = @gameId";
+                myCommand.CommandText = "SELECT " + columnName + " FROM battlezeppelins.game WHERE id = @gameId";
                 myCommand.Parameters.AddWithValue("@gameId", this.id);
                 using (MySqlDataReader reader = myCommand.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        string gameTablesStr = reader.GetString(reader.GetOrdinal(tableName));
+                        string gameTablesStr = reader.GetString(reader.GetOrdinal(columnName));
                         GameTable table = GameTable.deserialize(gameTablesStr);
+
+                        if (table.role != role) throw new System.IO.InvalidDataException(
+                            "Column \"" + columnName + "\" contains a table belonging to " + table.role);
+
                         return table;
                     }
                 }
