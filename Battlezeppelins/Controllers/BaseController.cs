@@ -36,6 +36,8 @@ namespace Battlezeppelins.Controllers
 
         private Player SearchPlayer(int id)
         {
+            if (!playerList.Any()) return null;
+
             foreach (Player listPlayer in playerList) {
                 if (listPlayer.id == id) {
                     return listPlayer;
