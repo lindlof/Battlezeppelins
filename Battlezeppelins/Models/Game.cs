@@ -213,10 +213,10 @@ namespace Battlezeppelins.Models
         {
             if (gameState == GameState.PREPARATION)
             {
-                GameTable table = this.GetPlayerTable();
+                GameTable table = GetTable(this.player.role);
                 if (table.zeppelins.Count == 3)
                 {
-                    GameTable opponentTable = this.GetOpponentTable();
+                    GameTable opponentTable = this.GetTable(this.opponent.role);
                     if (opponentTable.zeppelins.Count == 3)
                     {
                         this.SetState(Game.GameState.IN_PROGRESS);
