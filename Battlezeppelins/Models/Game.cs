@@ -106,6 +106,8 @@ namespace Battlezeppelins.Models
         {
             if (challenger != null && challengee != null)
             {
+                CheckGameState(challenger, challengee);
+
                 GameTable challengerTable = new GameTable(Role.CHALLENGER);
                 GameTable challengeeTable = new GameTable(Role.CHALLENGEE);
 
@@ -134,6 +136,14 @@ namespace Battlezeppelins.Models
                     conn.Close();
                 }
             }
+        }
+
+        public static void CheckGameState(Player challenger, Player challengee)
+        {
+            if (GetInstance(challenger) != null)
+                throw new InvalidOperationException(challenger.name + " is already in game");
+            if (GetInstance(challengee) != null)
+                throw new InvalidOperationException(challengee.name + " is already in game");
         }
 
         public GameTable GetPlayerTable()

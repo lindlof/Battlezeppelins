@@ -11,6 +11,8 @@ namespace Battlezeppelins.Models
     {
         public static void AddChallenge(Player challenger, Player challengee)
         {
+            Game.CheckGameState(challenger, challengee);
+
             MySqlConnection conn = new MySqlConnection(
             ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
             MySqlCommand myCommand = conn.CreateCommand();
