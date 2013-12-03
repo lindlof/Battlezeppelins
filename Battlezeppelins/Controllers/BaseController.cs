@@ -27,7 +27,7 @@ namespace Battlezeppelins.Controllers
                     if (player != null) return player;
 
                     Player newPlayer = Player.GetInstance(id);
-                    playerList.Add(newPlayer);
+                    if (newPlayer != null) playerList.Add(newPlayer);
                     return newPlayer;
                 }
             }
