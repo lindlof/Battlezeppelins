@@ -210,7 +210,7 @@
   function surrenderGame() {
     $.ajax({
       type: "POST",
-      url: "Game/Surrender",
+      url: '@Url.Content("~/Game/Surrender")',
       success: function (data) {
         pollGameMetadata();
       }
