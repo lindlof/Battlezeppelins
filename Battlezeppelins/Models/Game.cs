@@ -299,5 +299,46 @@ namespace Battlezeppelins.Models
 
             return null;
         }
+
+        private void PutTurnData(TurnData turnData)
+        {
+            bool challengerTurn = (player.role == Game.Role.CHALLENGER) ? false : true;
+            string lastOpenStr = turnData.lastOpen.serialize();
+
+            MySqlConnection conn = new MySqlConnection(
+                    ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+
+            try
+            {
+                myCommand.CommandText = "UPDATE battlezeppelins.game SET challengerTurn = @challengerTurn, lastOpen = @lastOpen";
+                myCommand.Parameters.AddWithValue("@challengerTurn", challengerTurn);
+                myCommand.Parameters.AddWithValue("@lastOpen", lastOpenStr);
+                myCommand.ExecuteNonQuery();
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+
+        public bool Open(Point point)
+        {
+            TurnData turnData = GetTurnData();
+            if (turnData.turn == false) return false;
+
+            GameTable table = GetOpponentTable();
+            if (table.alreadyOpen(point)) return false;
+
+            bool hit = table.pointCollides(point);
+            OpenPoint openPoint = new OpenPoint(point.x, point.y, hit);
+            table.openPoints.Add(openPoint);
+
+            TurnData newTurnData = new TurnData(false, openPoint);
+            PutTurnData(newTurnData);
+
+            return true;
+        }
     }
 }

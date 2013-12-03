@@ -82,10 +82,7 @@ namespace Battlezeppelins.Models
             List<Point> points = this.getPoints();
             foreach (Point thisPoint in points)
             {
-                if (thisPoint.x == point.x && thisPoint.y == point.y)
-                {
-                    return true;
-                }
+                if (thisPoint.Equals(point)) return true;
             }
             return false;
         }

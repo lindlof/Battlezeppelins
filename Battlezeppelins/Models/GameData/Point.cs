@@ -18,5 +18,11 @@ namespace Battlezeppelins.Models
             this.x = x;
             this.y = y;
         }
+
+        public override bool Equals(object obj)
+        {
+            Point point = (Point)obj;
+            return point.x == this.x && point.y == this.y;
+        }
     }
 }

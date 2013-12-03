@@ -59,6 +59,23 @@ namespace Battlezeppelins.Controllers
             return Json(zeppelinAdded, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult OpenPoint()
+        {
+            int x = Int32.Parse(Request.Form["x"]);
+            int y = Int32.Parse(Request.Form["y"]);
+            Point point = new Point(x, y);
+            bool success = false;
+
+            Player player = base.GetPlayer();
+            lock (player)
+            {
+                Game game = Game.GetInstance(player);
+                success = game.Open(point);
+            }
+
+            return Json(success, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult GetPlayerTable()
         {
             Game game = Game.GetInstance(base.GetPlayer());

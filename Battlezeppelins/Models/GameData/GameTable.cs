@@ -87,5 +87,24 @@ namespace Battlezeppelins.Models
                 }
             }
         }
+
+        public bool pointCollides(Point point)
+        {
+            foreach (Zeppelin zeppelin in zeppelins)
+            {
+                if (zeppelin.collides(point)) return true;
+            }
+            return false;
+        }
+
+        public bool alreadyOpen(Point point)
+        {
+            if (!openPoints.Any()) return false;
+
+            foreach (OpenPoint openPoint in openPoints) {
+                if (openPoint.Equals((Point)openPoint)) return true;
+            }
+            return false;
+        }
     }
 }

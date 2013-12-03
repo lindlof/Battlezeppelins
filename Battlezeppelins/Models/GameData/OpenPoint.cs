@@ -28,5 +28,10 @@ namespace Battlezeppelins.Models
 
             return deserialized;
         }
+
+        public string serialize()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }
