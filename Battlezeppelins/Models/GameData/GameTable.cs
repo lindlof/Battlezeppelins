@@ -99,8 +99,6 @@ namespace Battlezeppelins.Models
 
         public bool alreadyOpen(Point point)
         {
-            if (!openPoints.Any()) return false;
-
             foreach (OpenPoint openPoint in openPoints) {
                 if (openPoint.Equals((Point)openPoint)) return true;
             }

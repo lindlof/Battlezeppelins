@@ -47,8 +47,6 @@ namespace Battlezeppelins.Models
         /// <returns></returns>
         public bool fullyCollides(List<Point> collisionPoints)
         {
-            if (!collisionPoints.Any()) return false;
-
             foreach (Point zeppelinPoint in this.getPoints())
             {
                 bool pointCollides = false;
