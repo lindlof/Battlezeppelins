@@ -79,7 +79,8 @@ namespace Battlezeppelins.Models
         /// </summary>
         /// <param name="openPoints"></param>
         public void removeNonOpenZeppelins() {
-            foreach (Zeppelin zeppelin in zeppelins) {
+            foreach (Zeppelin zeppelin in zeppelins.ToList())
+            {
                 List<Point> points = new List<Point>(this.openPoints);
                 if (!(zeppelin.fullyCollides(points)))
                 {
