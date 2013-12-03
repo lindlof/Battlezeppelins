@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `battlezeppelins`.`Game` (
   `gameState` INT UNSIGNED NOT NULL,
   `challengerTable` VARCHAR(5000) NOT NULL,
   `challengeeTable` VARCHAR(5000) NOT NULL,
-  `challengerTurn` TINYINT(1) NULL,
+  `challengerTurn` TINYINT(1) NOT NULL,
   `lastOpen` VARCHAR(50) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_player_id_1_idx` (`challenger` ASC),

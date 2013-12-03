@@ -17,5 +17,16 @@ namespace Battlezeppelins.Models
         {
             this.hit = hit;
         }
+
+        public static OpenPoint deserialize(string serialized)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            };
+            OpenPoint deserialized = JsonConvert.DeserializeObject<OpenPoint>(serialized, settings);
+
+            return deserialized;
+        }
     }
 }

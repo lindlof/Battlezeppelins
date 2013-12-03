@@ -120,8 +120,8 @@ namespace Battlezeppelins.Models
                 try
                 {
                     myCommand.CommandText = 
-                        "INSERT INTO battlezeppelins.game (challenger, challengee, gameState, challengerTable, challengeeTable) " +
-                        "VALUES (@challenger, @challengee, @gameState, @challengerTable, @challengeeTable)";
+                        "INSERT INTO battlezeppelins.game (challenger, challengee, gameState, challengerTable, challengeeTable, challengerTurn) " +
+                        "VALUES (@challenger, @challengee, @gameState, @challengerTable, @challengeeTable, false)";
                     myCommand.Parameters.AddWithValue("@challenger", challenger.id);
                     myCommand.Parameters.AddWithValue("@challengee", challengee.id);
                     myCommand.Parameters.AddWithValue("@gameState", (int)GameState.PREPARATION);
@@ -188,7 +188,7 @@ namespace Battlezeppelins.Models
             string tableStr = table.serialize();
 
             MySqlConnection conn = new MySqlConnection(
-            ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+                    ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
             MySqlCommand myCommand = conn.CreateCommand();
             conn.Open();
 
@@ -209,7 +209,7 @@ namespace Battlezeppelins.Models
         private void SetState(GameState state)
         {
             MySqlConnection conn = new MySqlConnection(
-            ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+                    ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
             MySqlCommand myCommand = conn.CreateCommand();
             conn.Open();
 
@@ -255,6 +255,49 @@ namespace Battlezeppelins.Models
                     }
                 }
             }
+        }
+        
+        public TurnData GetTurnData()
+        {
+            MySqlConnection conn = new MySqlConnection(
+                    ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+            
+            try
+            {
+                myCommand.CommandText = "SELECT challengerTurn, lastOpen FROM battlezeppelins.game WHERE id = @gameId";
+                myCommand.Parameters.AddWithValue("@gameId", this.id);
+                using (MySqlDataReader reader = myCommand.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        bool challengerTurn = reader.GetBoolean(reader.GetOrdinal("challengerTurn"));
+                        bool challenger = player.role == Game.Role.CHALLENGER;
+
+                        bool turn = (challengerTurn && challenger) || (!challengerTurn && !challenger);
+                        OpenPoint lastOpen = null;
+
+                        {
+                            int ordinal = reader.GetOrdinal("lastOpen");
+                            if (!reader.IsDBNull(ordinal))
+                            {
+                                string lastOpenStr = reader.GetString(ordinal);
+                                lastOpen = OpenPoint.deserialize(lastOpenStr);
+                            }
+                        }
+
+                        TurnData turnData = new TurnData(turn, lastOpen);
+                        return turnData;
+                    }
+                }
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            return null;
         }
     }
 }

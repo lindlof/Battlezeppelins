@@ -174,14 +174,15 @@
     <Compile Include="Models\Challenge.cs" />
     <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\GameData\TurnData.cs" />
     <Compile Include="Models\GamePlayer.cs" />
-    <Compile Include="Models\PlayerTable\GameTable.cs" />
-    <Compile Include="Models\PlayerTable\OpenPoint.cs" />
+    <Compile Include="Models\GameData\GameTable.cs" />
+    <Compile Include="Models\GameData\OpenPoint.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\Data.cs" />
-    <Compile Include="Models\PlayerTable\Point.cs" />
-    <Compile Include="Models\PlayerTable\Zeppelin.cs" />
-    <Compile Include="Models\PlayerTable\ZeppelinType.cs" />
+    <Compile Include="Models\GameData\Point.cs" />
+    <Compile Include="Models\GameData\Zeppelin.cs" />
+    <Compile Include="Models\GameData\ZeppelinType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
