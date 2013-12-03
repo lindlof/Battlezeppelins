@@ -14,8 +14,8 @@ namespace Battlezeppelins.Models
 
         private int id { get; set; }
         public GameState gameState { get; private set; }
-        public GamePlayer player { get; set; }
-        public GamePlayer opponent { get; set; }
+        public GamePlayer player { get; private set; }
+        public GamePlayer opponent { get; private set; }
 
         public static Game GetInstance(Player player)
         {
