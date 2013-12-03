@@ -15,6 +15,9 @@ namespace Battlezeppelins.Models
 
         public Point(int x, int y)
         {
+            if (x < 0 || x > GameTable.TABLE_COLS - 1) throw new ArgumentOutOfRangeException("x");
+            if (y < 0 || y > GameTable.TABLE_ROWS - 1) throw new ArgumentOutOfRangeException("y");
+
             this.x = x;
             this.y = y;
         }
