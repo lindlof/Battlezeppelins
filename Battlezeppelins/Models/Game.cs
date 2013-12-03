@@ -206,27 +206,6 @@ namespace Battlezeppelins.Models
             }
         }
 
-        private void SetState(GameState state)
-        {
-            MySqlConnection conn = new MySqlConnection(
-                    ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
-            MySqlCommand myCommand = conn.CreateCommand();
-            conn.Open();
-
-            try
-            {
-                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @state";
-                myCommand.Parameters.AddWithValue("@state", state);
-                myCommand.ExecuteNonQuery();
-
-                this.gameState = state;
-            }
-            finally
-            {
-                conn.Close();
-            }
-        }
-
         public bool AddZeppelin(Zeppelin zeppelin)
         {
             GameTable table = this.GetPlayerTable();
@@ -254,6 +233,38 @@ namespace Battlezeppelins.Models
                         this.SetState(Game.GameState.IN_PROGRESS);
                     }
                 }
+            }
+            else if (gameState == GameState.IN_PROGRESS)
+            {
+                GameTable table = this.GetOpponentTable();
+                List<Point> points = new List<Point>(table.openPoints);
+                foreach (Zeppelin zeppelin in table.zeppelins)
+                {
+                    if (!zeppelin.fullyCollides(points)) return;
+                }
+                this.SetState(
+                    player.role == Game.Role.CHALLENGER ? Game.GameState.CHALLENGER_WON : Game.GameState.CHALLENGEE_WON);
+            }
+        }
+
+        private void SetState(GameState state)
+        {
+            MySqlConnection conn = new MySqlConnection(
+                    ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
+            MySqlCommand myCommand = conn.CreateCommand();
+            conn.Open();
+
+            try
+            {
+                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @state";
+                myCommand.Parameters.AddWithValue("@state", state);
+                myCommand.ExecuteNonQuery();
+
+                this.gameState = state;
+            }
+            finally
+            {
+                conn.Close();
             }
         }
         
@@ -334,9 +345,12 @@ namespace Battlezeppelins.Models
             bool hit = table.pointCollides(point);
             OpenPoint openPoint = new OpenPoint(point.x, point.y, hit);
             table.openPoints.Add(openPoint);
+            PutTable(table);
 
             TurnData newTurnData = new TurnData(false, openPoint);
             PutTurnData(newTurnData);
+
+            CheckGameState();
 
             return true;
         }
