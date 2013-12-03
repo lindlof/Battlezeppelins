@@ -81,27 +81,6 @@ namespace Battlezeppelins.Models
             this.opponent = opponent;
         }
 
-        public void Surrender()
-        {
-            MySqlConnection conn = new MySqlConnection(
-                ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
-            MySqlCommand myCommand = conn.CreateCommand();
-            conn.Open();
-
-            int newState = (player.role == Role.CHALLENGER) ? (int)GameState.CHALLENGER_WON : (int)GameState.CHALLENGEE_WON;
-
-            try
-            {
-                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @gameState";
-                myCommand.Parameters.AddWithValue("@gameState", newState);
-                myCommand.ExecuteNonQuery();
-            }
-            finally
-            {
-                conn.Close();
-            }
-        }
-
         public static void Register(Player challenger, Player challengee)
         {
             if (challenger != null && challengee != null)
@@ -255,6 +234,12 @@ namespace Battlezeppelins.Models
                 this.SetState(
                     player.role == Game.Role.CHALLENGER ? Game.GameState.CHALLENGER_WON : Game.GameState.CHALLENGEE_WON);
             }
+        }
+
+        public void Surrender()
+        {
+            GameState newState = (player.role == Role.CHALLENGER) ? GameState.CHALLENGER_WON : GameState.CHALLENGEE_WON;
+            SetState(newState);
         }
 
         private void SetState(GameState state)
