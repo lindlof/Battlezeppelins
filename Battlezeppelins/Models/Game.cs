@@ -266,8 +266,9 @@ namespace Battlezeppelins.Models
 
             try
             {
-                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @state";
+                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @state WHERE id = @gameId";
                 myCommand.Parameters.AddWithValue("@state", state);
+                myCommand.Parameters.AddWithValue("@gameId", this.id);
                 myCommand.ExecuteNonQuery();
 
                 this.gameState = state;
