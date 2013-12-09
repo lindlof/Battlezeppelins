@@ -9,7 +9,7 @@ namespace Battlezeppelins.Controllers
 {
     public abstract class BaseController : Controller
     {
-        private static List<Player> playerList = new List<Player>();
+        private static Dictionary<int, Player> players = new Dictionary<int, Player>();
 
         public Player GetPlayer()
         {
@@ -21,13 +21,13 @@ namespace Battlezeppelins.Controllers
                 Player player = SearchPlayer(id);
                 if (player != null) return player;
 
-                lock (playerList)
+                lock (players)
                 {
                     player = SearchPlayer(id);
                     if (player != null) return player;
 
                     Player newPlayer = Player.GetInstance(id);
-                    if (newPlayer != null) playerList.Add(newPlayer);
+                    if (newPlayer != null) players.Add(newPlayer.id, newPlayer);
                     return newPlayer;
                 }
             }
@@ -36,10 +36,10 @@ namespace Battlezeppelins.Controllers
 
         private Player SearchPlayer(int id)
         {
-            foreach (Player listPlayer in playerList) {
-                if (listPlayer.id == id) {
-                    return listPlayer;
-                }
+            Player player;
+            if (players.TryGetValue(id, out player))
+            {
+                return player;
             }
             return null;
         }

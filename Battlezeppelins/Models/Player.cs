@@ -10,19 +10,27 @@ namespace Battlezeppelins.Models
     public class Player
     {
         public string name { get; set; }
-        public int? id { get; set; }
+        public int id { get; set; }
 
         public static Player GetInstance(int? id)
         {
-            Player player = new Player(id);
-            if (player.id == null) return null;
+            Player player;
+            try {
+                player = new Player(id);
+            } catch (ArgumentException) {
+                return null;
+            }
             return player;
         }
 
         public static Player GetInstance(string name)
         {
-            Player player = new Player(name);
-            if (player.id == null) return null;
+            Player player;
+            try {
+                player = new Player(name);
+            } catch (ArgumentException) {
+                return null;
+            }
             return player;
         }
 
@@ -43,8 +51,12 @@ namespace Battlezeppelins.Models
                     {
                         if (reader.Read())
                         {
-                            this.id = id;
+                            this.id = (int)id;
                             this.name = reader.GetString(reader.GetOrdinal("name"));
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Player not found");
                         }
                     }
                 }
@@ -52,6 +64,10 @@ namespace Battlezeppelins.Models
                 {
                     conn.Close();
                 }
+            }
+            else
+            {
+                throw new ArgumentNullException();
             }
         }
 
@@ -75,12 +91,20 @@ namespace Battlezeppelins.Models
                             this.id = reader.GetInt32(reader.GetOrdinal("id"));
                             this.name = name;
                         }
+                        else
+                        {
+                            throw new ArgumentException("Player not found");
+                        }
                     }
                 }
                 finally
                 {
                     conn.Close();
                 }
+            }
+            else
+            {
+                throw new ArgumentNullException();
             }
         }
 
