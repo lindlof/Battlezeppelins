@@ -81,6 +81,16 @@
     this.place = function (x,y) {
         this.x = x;
         this.y = y;
+
+        var draggable = document.getElementById(this.id);
+        draggable.parentNode.removeChild(draggable);
+
+        for (var i = 0; i < this.size; i++) {
+          $("#gameTable button[id^='" + this.x + "," + (i + parseInt(this.y)) + "']").text(this.sname);
+        }
+
+        if (ships.allSet())
+          $("#continue").attr("disabled", false);
     };
 
     this.safe = function () {
@@ -146,19 +156,17 @@
     $(this).attr("disabled", true);
   });
 
-  var showShip = function (ship) {
-    for(var i = 0; i < ship.size; i++) {
-      $("#gameTable button[id^='" + ship.x + "," + (i + parseInt(ship.y)) + "']").text(ship.sname);
-    }
-  };
   $("#continue").click(function () {
-    $("#placement").hide();
-    $("#enemyTable").show({ effect: 'drop', direction: "up", mode: 'slow' ,duration:2000});
-    ships.safeAll();
-    $("#gameTable").removeClass("game").addClass("gameOwn");
-    $("#owngameTable").addClass("gameOwn2");
-    $("#gameTable button").attr("disabled",true);
+      ships.safeAll();
+      toGamePhase();
   });
+  function toGamePhase() {
+      $("#placement").hide();
+      $("#enemyTable").show({ effect: 'drop', direction: "up", mode: 'slow', duration: 2000 });
+      $("#gameTable").removeClass("game").addClass("gameOwn");
+      $("#owngameTable").addClass("gameOwn2");
+      $("#gameTable button").attr("disabled", true);
+  }
 
 
   $(function () {
@@ -173,10 +181,6 @@
         var shipId = $(ui.draggable).attr("id");
         var ship = ships.get(shipId);
         ship.place(xy[0], xy[1]);
-        ui.draggable.remove();
-        showShip(ship);
-        if (ships.allSet())
-          $("#continue").attr("disabled",false);
       }
     })
   });
@@ -206,6 +210,22 @@
   }
   window.setInterval(pollGameMetadata, 5000);
   pollGameMetadata();
+
+  function constructGame() {
+    $.ajax({
+      type: "POST",
+      url: '@Url.Content("~/Game/GetPlayerTable")',
+      success: function (data) {
+          $.each(data.zeppelins, function (i, zeppelin) {
+              var ship = ships.get(zeppelin.type.name);
+              ship.place(zeppelin.location.x, zeppelin.location.y);
+          });
+          if (ships.allSet())
+            toGamePhase();
+      }
+    });
+  }
+  constructGame();
 
   function surrenderGame() {
     $.ajax({
