@@ -333,11 +333,16 @@ namespace Battlezeppelins.Models
 
         public bool Open(Point point)
         {
+            if (gameState != GameState.IN_PROGRESS)
+                return false;
+
             TurnData turnData = GetTurnData();
-            if (turnData.turn == false) return false;
+            if (turnData.turn == false)
+                return false;
 
             GameTable table = GetOpponentTable();
-            if (table.alreadyOpen(point)) return false;
+            if (table.alreadyOpen(point))
+                return false;
 
             bool hit = table.pointCollides(point);
             OpenPoint openPoint = new OpenPoint(point.x, point.y, hit);
