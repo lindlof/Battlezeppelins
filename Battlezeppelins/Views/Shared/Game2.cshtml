@@ -2,7 +2,7 @@
 
 <div class="row" style="padding-top:20px;">
   <div class="col-xs-8" style="padding-left:200px">
-    <div class="gameEnemy" id="enemyTable" style="z-index:100">
+    <div class="gameEnemy" id="opponentTable" style="z-index:100">
       <table class="table table-bordered">
         @for(var y = 0; y < 10; y++){
         <tr>
@@ -151,9 +151,23 @@
   };
   var ships = new ShipList();
 
-  $("#enemyTable button").click(function () {
-    $(this).addClass("usedSlot");
-    $(this).attr("disabled", true);
+  $("#opponentTable button").click(function () {
+    var slot = $(this);
+    var xy = $(this).attr('id').split(',');
+    $.ajax({
+      type: "POST",
+      url: '@Url.Content("~/Game/OpenPoint")',
+      data: {
+        x: xy[0], y: xy[1]
+      },
+      success: function (success) {
+          if (success) {
+              alert("lol");
+          slot.addClass("usedSlot");
+          slot.attr("disabled", true);
+        }
+      }
+    });
   });
 
   $("#continue").click(function () {
@@ -162,7 +176,7 @@
   });
   function toGamePhase() {
       $("#placement").hide();
-      $("#enemyTable").show({ effect: 'drop', direction: "up", mode: 'slow', duration: 2000 });
+      $("#opponentTable").show({ effect: 'drop', direction: "up", mode: 'slow', duration: 2000 });
       $("#gameTable").removeClass("game").addClass("gameOwn");
       $("#owngameTable").addClass("gameOwn2");
       $("#gameTable button").attr("disabled", true);
@@ -193,7 +207,7 @@
   });
 
   $(document).ready(function () {
-    $("#enemyTable").hide();
+    $("#opponentTable").hide();
   });
   
   function pollGameMetadata() {

@@ -36,6 +36,7 @@ namespace Battlezeppelins.Models
                     myCommand.Parameters.AddWithValue("@gameStatePrep", (int)GameState.PREPARATION);
                     myCommand.Parameters.AddWithValue("@gameStateProgress", (int)GameState.IN_PROGRESS);
                     myCommand.Parameters.AddWithValue("@playerId", player.id);
+
                     using (MySqlDataReader reader = myCommand.ExecuteReader())
                     {
                         if (reader.Read())
