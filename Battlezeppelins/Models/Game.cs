@@ -226,7 +226,7 @@ namespace Battlezeppelins.Models
             }
             else if (gameState == GameState.IN_PROGRESS)
             {
-                GameTable table = this.GetOpponentTable();
+                GameTable table = this.GetTable(this.opponent.role);
                 List<Point> points = new List<Point>(table.openPoints);
                 foreach (Zeppelin zeppelin in table.zeppelins)
                 {
@@ -340,7 +340,7 @@ namespace Battlezeppelins.Models
             if (turnData.turn == false)
                 return false;
 
-            GameTable table = GetOpponentTable();
+            GameTable table = GetTable(this.opponent.role);
             if (table.alreadyOpen(point))
                 return false;
 
