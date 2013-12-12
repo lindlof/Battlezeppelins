@@ -209,8 +209,9 @@ namespace Battlezeppelins.Models
 
             try
             {
-                myCommand.CommandText = "UPDATE battlezeppelins.game SET " + tableName + " = @table";
+                myCommand.CommandText = "UPDATE battlezeppelins.game SET " + tableName + " = @table WHERE id = @gameId";
                 myCommand.Parameters.AddWithValue("@table", tableStr);
+                myCommand.Parameters.AddWithValue("@gameId", this.id);
                 myCommand.ExecuteNonQuery();
             }
             finally
@@ -350,9 +351,12 @@ namespace Battlezeppelins.Models
 
             try
             {
-                myCommand.CommandText = "UPDATE battlezeppelins.game SET challengerTurn = @challengerTurn, lastOpen = @lastOpen";
+                myCommand.CommandText = 
+                    "UPDATE battlezeppelins.game SET challengerTurn = @challengerTurn, lastOpen = @lastOpen " + 
+                    "WHERE id = @gameId";
                 myCommand.Parameters.AddWithValue("@challengerTurn", challengerTurn);
                 myCommand.Parameters.AddWithValue("@lastOpen", lastOpenStr);
+                myCommand.Parameters.AddWithValue("@gameId", this.id);
                 myCommand.ExecuteNonQuery();
             }
             finally
