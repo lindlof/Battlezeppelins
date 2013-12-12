@@ -44,8 +44,8 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = 
-                        "SELECT id, gameState, challenger, challengee, " +
+                    myCommand.CommandText =
+                        "SELECT id, gameState, stateReason, challenger, challengee, " +
                         "TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, updateTime)) AS inactivity " + 
                         "FROM battlezeppelins.game " +
                         "WHERE (challenger = @playerId OR challengee = @playerId) ORDER BY updateTime DESC LIMIT 1";
@@ -79,6 +79,13 @@ namespace Battlezeppelins.Models
                                 game.id = id;
                                 int gameState = reader.GetInt32(reader.GetOrdinal("gameState"));
                                 game.gameState = (GameState)gameState;
+
+                                int ordinalReason = reader.GetOrdinal("stateReason");
+                                if (!reader.IsDBNull(ordinalReason))
+                                {
+                                    int stateReason = reader.GetInt32(ordinalReason);
+                                    game.stateReason = (StateReason)stateReason;
+                                }
                             }
 
                             if (inactivity > 120)
