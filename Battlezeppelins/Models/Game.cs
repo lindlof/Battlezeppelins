@@ -10,7 +10,7 @@ namespace Battlezeppelins.Models
     public class Game
     {
         public enum GameState { PREPARATION = 0, IN_PROGRESS = 1, CHALLENGER_WON = 2, CHALLENGEE_WON = 3 }
-        public enum StateReason { GAME_OUTCOME = 0, OPP_SURRENDER = 1, OPP_INACTIVITY = 2 }
+        public enum StateReason { GAME_OUTCOME = 0, SURRENDER = 1, INACTIVITY = 2 }
         public enum Role { CHALLENGER, CHALLENGEE }
 
         private int id { get; set; }
@@ -92,7 +92,7 @@ namespace Battlezeppelins.Models
                             {
                                 TurnData turnData = game.GetTurnData();
                                 GameState newState = (turnData.turn) ? game.opponent.getWonState() : game.player.getWonState();
-                                game.SetState(newState, StateReason.OPP_INACTIVITY);
+                                game.SetState(newState, StateReason.INACTIVITY);
                             }
                         }
                     }
@@ -272,7 +272,7 @@ namespace Battlezeppelins.Models
         public void Surrender()
         {
             GameState newState = (player.role == Role.CHALLENGER) ? GameState.CHALLENGER_WON : GameState.CHALLENGEE_WON;
-            SetState(newState, StateReason.OPP_SURRENDER);
+            SetState(newState, StateReason.SURRENDER);
         }
 
         private void SetState(GameState state, StateReason? reason)
