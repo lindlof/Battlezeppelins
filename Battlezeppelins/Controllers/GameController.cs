@@ -3,36 +3,57 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using Battlezeppelins.Models;
 
 namespace Battlezeppelins.Controllers
 {
     public class GameController : BaseController
     {
+        class MetadataResult
+        {
+            public bool playing;
+            public string opponent;
+            public string gameState;
+            public string stateReason;
+        }
+
         public ActionResult Metadata()
         {
-            Game game = Game.GetInstance(base.GetPlayer());
+            Player player = base.GetPlayer();
+            Game game = Game.GetCurrentInstance(player);
+
+            MetadataResult metadata = new MetadataResult();
+
+            if (game != null) {
+                metadata.playing = true;
+            } else {
+                metadata.playing = false;
+                game = Game.GetLatestInstance(player);
+            }
 
             if (game != null)
             {
-                return Json(new { 
-                    playing = true, 
-                    opponent = game.opponent.name,
-                    gameState = game.gameState.ToString() }, JsonRequestBehavior.AllowGet);
+                metadata.opponent = game.opponent.name;
+                metadata.gameState = game.GameStateClientString();
+                if (game.stateReason != null) 
+                    metadata.stateReason = game.stateReason.ToString();
             }
-            else
-            {
-                return Json(new { playing = false }, JsonRequestBehavior.AllowGet);
-            }
+
+            return Json(metadata, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Surrender()
         {
-            Game game = Game.GetInstance(base.GetPlayer());
+            Player player = base.GetPlayer();
+            Game game = Game.GetCurrentInstance(player);
 
             if (game != null)
             {
-                game.Surrender();
+                lock (player)
+                {
+                    game.Surrender();
+                }
             }
 
             return null;
@@ -52,7 +73,7 @@ namespace Battlezeppelins.Controllers
             bool zeppelinAdded;
             lock (player)
             {
-                Game game = Game.GetInstance(player);
+                Game game = Game.GetCurrentInstance(player);
                 zeppelinAdded = game.AddZeppelin(zeppelin);
             }
 
@@ -69,7 +90,7 @@ namespace Battlezeppelins.Controllers
             Player player = base.GetPlayer();
             lock (player)
             {
-                Game game = Game.GetInstance(player);
+                Game game = Game.GetCurrentInstance(player);
                 success = game.Open(point);
             }
 
@@ -78,21 +99,21 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult GetPlayerTable()
         {
-            Game game = Game.GetInstance(base.GetPlayer());
-            GameTable table = game.GetPlayerTable();
+            Game game = Game.GetCurrentInstance(base.GetPlayer());
+            GameTable table = (game != null) ? game.GetPlayerTable() : null;
             return Json(table, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetOpponentTable()
         {
-            Game game = Game.GetInstance(base.GetPlayer());
-            GameTable table = game.GetOpponentTable();
+            Game game = Game.GetCurrentInstance(base.GetPlayer());
+            GameTable table = (game != null) ? game.GetOpponentTable() : null;
             return Json(table, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetTurn()
         {
-            Game game = Game.GetInstance(base.GetPlayer());
+            Game game = Game.GetCurrentInstance(base.GetPlayer());
             TurnData turn = game.GetTurnData();
             return Json(turn, JsonRequestBehavior.AllowGet);
         }

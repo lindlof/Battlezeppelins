@@ -14,13 +14,24 @@ namespace Battlezeppelins.Models
 
         public static GamePlayer GetInstance(int? id, Game.Role role)
         {
-            GamePlayer gamePlayer = new GamePlayer(id, role);
-            if (gamePlayer.id == null) return null;
-            return gamePlayer;
+            try
+            {
+                return new GamePlayer(id, role);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+            
         }
 
         private GamePlayer(int? id, Game.Role role) : base(id) {
             this.role = role;
+        }
+
+        public Game.GameState getWonState() {
+            if (role == Game.Role.CHALLENGER) return Game.GameState.CHALLENGER_WON;
+            else return Game.GameState.CHALLENGEE_WON;
         }
     }
 }

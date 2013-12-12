@@ -10,14 +10,28 @@ namespace Battlezeppelins.Models
     public class Game
     {
         public enum GameState { PREPARATION = 0, IN_PROGRESS = 1, CHALLENGER_WON = 2, CHALLENGEE_WON = 3 }
+        public enum StateReason { GAME_OUTCOME = 0, OPP_SURRENDER = 1, OPP_INACTIVITY = 2 }
         public enum Role { CHALLENGER, CHALLENGEE }
 
         private int id { get; set; }
         public GameState gameState { get; private set; }
+        public StateReason? stateReason { get; private set; }
         public GamePlayer player { get; private set; }
         public GamePlayer opponent { get; private set; }
 
-        public static Game GetInstance(Player player)
+        public static Game GetCurrentInstance(Player player)
+        {
+            Game game = GetLatestInstance(player);
+            if (game != null &&
+                (game.gameState != GameState.CHALLENGER_WON && game.gameState != GameState.CHALLENGEE_WON))
+            {
+                return game;
+            }
+
+            return null;
+        }
+
+        public static Game GetLatestInstance(Player player)
         {
             Game game = null;
 
@@ -30,17 +44,19 @@ namespace Battlezeppelins.Models
 
                 try
                 {
-                    myCommand.CommandText = "SELECT id, gameState, challenger, challengee FROM battlezeppelins.game " +
-                        "WHERE (gameState = @gameStatePrep OR gameState = @gameStateProgress) " + 
-                        "AND (challenger = @playerId OR challengee = @playerId)";
-                    myCommand.Parameters.AddWithValue("@gameStatePrep", (int)GameState.PREPARATION);
-                    myCommand.Parameters.AddWithValue("@gameStateProgress", (int)GameState.IN_PROGRESS);
+                    myCommand.CommandText = 
+                        "SELECT id, gameState, challenger, challengee, " +
+                        "TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, updateTime)) AS inactivity " + 
+                        "FROM battlezeppelins.game " +
+                        "WHERE (challenger = @playerId OR challengee = @playerId) ORDER BY updateTime DESC LIMIT 1";
                     myCommand.Parameters.AddWithValue("@playerId", player.id);
 
                     using (MySqlDataReader reader = myCommand.ExecuteReader())
                     {
                         if (reader.Read())
                         {
+                            int? inactivity = reader.GetInt32(reader.GetOrdinal("inactivity"));
+
                             int? challengerId = reader.GetInt32(reader.GetOrdinal("challenger"));
                             int? challengeeId = reader.GetInt32(reader.GetOrdinal("challengee"));
 
@@ -63,6 +79,13 @@ namespace Battlezeppelins.Models
                                 game.id = id;
                                 int gameState = reader.GetInt32(reader.GetOrdinal("gameState"));
                                 game.gameState = (GameState)gameState;
+                            }
+
+                            if (inactivity > 120)
+                            {
+                                TurnData turnData = game.GetTurnData();
+                                GameState newState = (turnData.turn) ? game.opponent.getWonState() : game.player.getWonState();
+                                game.SetState(newState, StateReason.OPP_INACTIVITY);
                             }
                         }
                     }
@@ -120,9 +143,9 @@ namespace Battlezeppelins.Models
 
         public static void CheckGameState(Player challenger, Player challengee)
         {
-            if (GetInstance(challenger) != null)
+            if (GetCurrentInstance(challenger) != null)
                 throw new InvalidOperationException(challenger.name + " is already in game");
-            if (GetInstance(challengee) != null)
+            if (GetCurrentInstance(challengee) != null)
                 throw new InvalidOperationException(challengee.name + " is already in game");
         }
 
@@ -204,6 +227,7 @@ namespace Battlezeppelins.Models
             if (zeppelinAdded)
             {
                 this.PutTable(table);
+                PutTurnData(new TurnData(false, null)); // Faster gets to start
                 this.CheckGameState();
             }
 
@@ -220,7 +244,7 @@ namespace Battlezeppelins.Models
                     GameTable opponentTable = this.GetTable(this.opponent.role);
                     if (opponentTable.zeppelins.Count == 3)
                     {
-                        this.SetState(Game.GameState.IN_PROGRESS);
+                        this.SetState(Game.GameState.IN_PROGRESS, null);
                     }
                 }
             }
@@ -232,32 +256,38 @@ namespace Battlezeppelins.Models
                 {
                     if (!zeppelin.fullyCollides(points)) return;
                 }
-                this.SetState(
-                    player.role == Game.Role.CHALLENGER ? Game.GameState.CHALLENGER_WON : Game.GameState.CHALLENGEE_WON);
+                Game.GameState state = (player.role == Game.Role.CHALLENGER) ? Game.GameState.CHALLENGER_WON : Game.GameState.CHALLENGEE_WON;
+                this.SetState(state, StateReason.GAME_OUTCOME);
             }
         }
 
         public void Surrender()
         {
             GameState newState = (player.role == Role.CHALLENGER) ? GameState.CHALLENGER_WON : GameState.CHALLENGEE_WON;
-            SetState(newState);
+            SetState(newState, StateReason.OPP_SURRENDER);
         }
 
-        private void SetState(GameState state)
+        private void SetState(GameState state, StateReason? reason)
         {
             MySqlConnection conn = new MySqlConnection(
                     ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
             MySqlCommand myCommand = conn.CreateCommand();
             conn.Open();
 
+            object reasonObj = reason;
+            if (reasonObj == null)
+                reasonObj = DBNull.Value;
+
             try
             {
-                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @state WHERE id = @gameId";
+                myCommand.CommandText = "UPDATE battlezeppelins.game SET gameState = @state, stateReason = @reason WHERE id = @gameId";
                 myCommand.Parameters.AddWithValue("@state", state);
+                myCommand.Parameters.AddWithValue("@reason", reasonObj);
                 myCommand.Parameters.AddWithValue("@gameId", this.id);
                 myCommand.ExecuteNonQuery();
 
                 this.gameState = state;
+                this.stateReason = reason;
             }
             finally
             {
@@ -311,7 +341,7 @@ namespace Battlezeppelins.Models
         private void PutTurnData(TurnData turnData)
         {
             bool challengerTurn = (player.role == Game.Role.CHALLENGER) ? false : true;
-            string lastOpenStr = turnData.lastOpen.serialize();
+            string lastOpenStr = (turnData.lastOpen != null) ? turnData.lastOpen.serialize() : null;
 
             MySqlConnection conn = new MySqlConnection(
                     ConfigurationManager.ConnectionStrings["BattlezConnection"].ConnectionString);
@@ -355,6 +385,24 @@ namespace Battlezeppelins.Models
             CheckGameState();
 
             return true;
+        }
+
+        public string GameStateClientString() {
+            string win = "YOU_WIN";
+            string lose = "YOU_LOSE";
+
+            if (gameState == GameState.CHALLENGER_WON)
+            {
+                return player.role == Role.CHALLENGER ? win : lose;
+            }
+            else if (gameState == GameState.CHALLENGEE_WON)
+            {
+                return player.role == Role.CHALLENGEE ? win : lose;
+            }
+            else
+            {
+                return gameState.ToString();
+            }
         }
     }
 }
