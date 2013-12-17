@@ -13,7 +13,7 @@
         <script>
           var poller = window.setInterval(function () {
             $.getJSON('@Url.Content("~/Poll/UpdateLastSeen")', function (data) { });
-          }, 60000);
+          }, 5000);
         </script>
         <style>
         .col-centered {

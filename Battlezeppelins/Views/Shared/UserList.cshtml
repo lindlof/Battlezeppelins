@@ -1,13 +1,8 @@
 ﻿@model Battlezeppelins.Models.Data
 <h3>Player list</h3>
 <form id="BattleChallenge">
-    <select id="challengeeSelect" size="4" multiple>
-    @foreach (var item in Model.activePlayers)
-    {
-        <option>@item</option>
-    }
-    </select>
-    <input type="button" onclick="sendChallenge()" value="Challenge" />
+    <select class="form-control" id="challengeeSelect" size="22" multiple></select>
+    <button type="button" class="btn btn-info btn-block" onclick="sendChallenge()">Challenge</button>
 </form>
 <script>
     function sendChallenge() {
@@ -22,4 +17,21 @@
             }
         });
     };
+    function asdWhosOnline() {
+      $.ajax({
+        type: "POST",
+        url: "Player/GetOnline",
+        data: { fromId: lastId },
+        success: function (data) {
+          $('#challengeeSelect').empty();
+          $.each(data, function (i, player) {
+            $('#challengeeSelect').append('<option>' + player + '</option>');
+            console.log(player);
+          });
+        }
+      });
+      setTimeout(asdWhosOnline, 5000);
+    }
+    asdWhosOnline();
+
 </script>

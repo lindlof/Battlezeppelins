@@ -166,6 +166,7 @@
     <Compile Include="Controllers\ChatController.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PlayerController.cs" />
     <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\ChallengeController.cs" />
     <Compile Include="Global.asax.cs">
