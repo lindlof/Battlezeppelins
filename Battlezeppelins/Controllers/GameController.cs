@@ -114,7 +114,8 @@ namespace Battlezeppelins.Controllers
         public ActionResult GetTurn()
         {
             Game game = Game.GetCurrentInstance(base.GetPlayer());
-            TurnData turn = game.GetTurnData();
+						TurnData turn = null;
+					  if (game != null) turn = game.GetTurnData();
             return Json(turn, JsonRequestBehavior.AllowGet);
         }
     }

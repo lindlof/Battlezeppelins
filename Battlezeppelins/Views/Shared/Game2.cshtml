@@ -69,6 +69,8 @@
 </div>
 
 <script>
+	playing = false;
+
   function Ship(size, name) {
     this.id = name;
     this.name = name;
@@ -214,20 +216,26 @@
       var div = document.getElementById("game");
       var text = document.getElementById("opponent");
       if (data.playing) {
-          text.textContent = "Playing with " + data.opponent;
-          div.style.display = "inline-block";
-      } else if (data.opponent) {
-          var result = (data.gameState == "YOU_WIN") ? "win" : "lose";
-          text.textContent = "You " + result + " against " + data.opponent;
+      	playing = true;
 
-          if (data.stateReason == "SURRENDER")
-              text.textContent += " (surrender)";
-          else if (data.stateReason == "INACTIVITY")
-              text.textContent += " (inactivity)";
-
-          div.style.display = "inline-block";
+      	text.textContent = "Playing with " + data.opponent;
+      	div.style.display = "inline-block";
       } else {
-        div.style.display = "none";
+      	playing = false;
+
+      	if (data.opponent) {
+      		var result = (data.gameState == "YOU_WIN") ? "win" : "lose";
+      		text.textContent = "You " + result + " against " + data.opponent;
+
+      		if (data.stateReason == "SURRENDER")
+      			text.textContent += " (surrender)";
+      		else if (data.stateReason == "INACTIVITY")
+      			text.textContent += " (inactivity)";
+
+      		div.style.display = "inline-block";
+      	} else {
+      		div.style.display = "none";
+      	}
       }
     });
   }
@@ -249,6 +257,19 @@
     });
   }
   constructGame();
+
+  function pollTurnData() {
+  	if (playing) {
+  		$.getJSON('@Url.Content("~/Game/GetTurn")', function (data) {
+  			if (data.turn == true) {
+  				var slot = $("#owngameTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
+  				slot.addClass("usedSlot");
+  			}
+  		});
+  	}
+	}
+	window.setInterval(pollTurnData, 500);
+	pollTurnData();
 
   function surrenderGame() {
     $.ajax({
