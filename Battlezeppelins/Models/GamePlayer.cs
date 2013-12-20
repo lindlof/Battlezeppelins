@@ -29,9 +29,15 @@ namespace Battlezeppelins.Models
             this.role = role;
         }
 
-        public Game.GameState getWonState() {
+        public Game.GameState getWinState() {
             if (role == Game.Role.CHALLENGER) return Game.GameState.CHALLENGER_WON;
             else return Game.GameState.CHALLENGEE_WON;
+        }
+
+        public Game.GameState getLoseState()
+        {
+            if (role == Game.Role.CHALLENGER) return Game.GameState.CHALLENGEE_WON;
+            else return Game.GameState.CHALLENGER_WON;
         }
     }
 }

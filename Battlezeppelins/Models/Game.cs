@@ -91,7 +91,7 @@ namespace Battlezeppelins.Models
                             if (inactivity > 120)
                             {
                                 TurnData turnData = game.GetTurnData();
-                                GameState newState = (turnData.turn) ? game.opponent.getWonState() : game.player.getWonState();
+                                GameState newState = (turnData.turn) ? game.opponent.getWinState() : game.player.getWinState();
                                 game.SetState(newState, StateReason.INACTIVITY);
                             }
                         }
@@ -271,8 +271,7 @@ namespace Battlezeppelins.Models
 
         public void Surrender()
         {
-            GameState newState = (player.role == Role.CHALLENGER) ? GameState.CHALLENGER_WON : GameState.CHALLENGEE_WON;
-            SetState(newState, StateReason.SURRENDER);
+            SetState(player.getLoseState(), StateReason.SURRENDER);
         }
 
         private void SetState(GameState state, StateReason? reason)
