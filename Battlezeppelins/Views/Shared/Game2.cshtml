@@ -261,10 +261,12 @@
   function pollTurnData() {
   	if (playing) {
   		$.getJSON('@Url.Content("~/Game/GetTurn")', function (data) {
-  			if (data.turn == true) {
+  			if (data.turn != data.lastOpen.hit) {
+					// Opponent opened the last time
   				var slot = $("#owngameTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
   				slot.addClass("usedSlot");
   			} else {
+  				// You opened the last time
   				var slot = $("#opponentTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
   				if (data.lastOpen.hit == true) {
   					slot.addClass("hitSlot");

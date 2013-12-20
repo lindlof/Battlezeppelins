@@ -347,7 +347,7 @@ namespace Battlezeppelins.Models
 
         private void PutTurnData(TurnData turnData)
         {
-            bool challengerTurn = (player.role == Game.Role.CHALLENGER) ? false : true;
+						bool challengerTurn = (player.role == Game.Role.CHALLENGER) ? turnData.turn : !turnData.turn;
             string lastOpenStr = (turnData.lastOpen != null) ? turnData.lastOpen.serialize() : null;
 
             MySqlConnection conn = new MySqlConnection(
@@ -389,7 +389,8 @@ namespace Battlezeppelins.Models
             table.openPoints.Add(openPoint);
             PutTable(table);
 
-            TurnData newTurnData = new TurnData(false, openPoint);
+						bool playerContinues = hit;
+						TurnData newTurnData = new TurnData(playerContinues, openPoint);
             PutTurnData(newTurnData);
 
             CheckGameState();
