@@ -264,6 +264,11 @@
   			if (data.turn == true) {
   				var slot = $("#owngameTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
   				slot.addClass("usedSlot");
+  			} else {
+  				var slot = $("#opponentTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
+  				if (data.lastOpen.hit == true) {
+  					slot.addClass("hitSlot");
+  				}
   			}
   		});
   	}
