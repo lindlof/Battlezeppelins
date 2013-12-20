@@ -255,6 +255,7 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
     <None Include="Properties\PublishProfiles\Battlez.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+	<Content Include="Images\hit.png" />
     <Content Include="Images\redcross.png" />
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.js" />
