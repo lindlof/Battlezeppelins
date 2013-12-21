@@ -69,7 +69,7 @@
 </div>
 
 <script>
-	playing = false;
+	var playing = false;
 
   function Ship(size, name) {
     this.id = name;
@@ -271,6 +271,13 @@
   				if (data.lastOpen.hit == true) {
   					slot.addClass("hitSlot");
   				}
+  			}
+
+  			var btns = $('#opponentTable button');
+  			if (!data.turn) {
+  				btns.attr('disabled', true).fadeTo('slow', 0.6);
+  			} else {
+  				btns.attr('disabled', false).fadeTo('fast', 1.0);
   			}
   		});
   	}
