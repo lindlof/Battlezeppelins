@@ -164,12 +164,15 @@
       },
       success: function (success) {
           if (success) {
-          slot.addClass("usedSlot");
-          slot.attr("disabled", true);
+          	openSlot(slot);
         }
       }
     });
   });
+	function openSlot(slot) {
+		slot.addClass("usedSlot");
+		slot.attr("disabled", true);
+	}
 
   $("#continue").click(function () {
       ships.safeAll();
@@ -252,9 +255,27 @@
               ship.place(zeppelin.location.x, zeppelin.location.y);
           });
           if (ships.allSet())
-            toGamePhase();
+          	toGamePhase();
+
+          $.each(data.openPoints, function (i, openPoint) {
+          	var slot = $("#owngameTable button[id^='" + openPoint.x + "," + openPoint.y + "']");
+          	openSlot(slot);
+          	if (openPoint.hit) slot.addClass("hitSlot");
+          });
       }
     });
+  	$.ajax({
+  		type: "POST",
+  		url: '@Url.Content("~/Game/GetOpponentTable")',
+      success: function (data) {
+      	$.each(data.openPoints, function (i, openPoint) {
+      		var slot = $("#opponentTable button[id^='" + openPoint.x + "," + openPoint.y + "']");
+      		openSlot(slot);
+      		if (openPoint.hit)
+      			slot.addClass("hitSlot");
+      	});
+      }
+		});
   }
   constructGame();
 
@@ -265,12 +286,13 @@
 					// Opponent opened the last time
   				var slot = $("#owngameTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
   				slot.addClass("usedSlot");
+  				if (data.lastOpen.hit)
+  					slot.addClass("hitSlot");
   			} else {
   				// You opened the last time
   				var slot = $("#opponentTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
-  				if (data.lastOpen.hit == true) {
+  				if (data.lastOpen.hit)
   					slot.addClass("hitSlot");
-  				}
   			}
 
   			var btns = $('#opponentTable button');
