@@ -164,7 +164,8 @@ namespace Battlezeppelins.Models
         public GameTable GetOpponentTable()
         {
             GameTable opponentTable = GetTable(this.opponent.role);
-            opponentTable.removeNonOpenZeppelins();
+            //opponentTable.removeNonOpenZeppelins();
+						opponentTable.removeZeppelins();
             return opponentTable;
         }
 

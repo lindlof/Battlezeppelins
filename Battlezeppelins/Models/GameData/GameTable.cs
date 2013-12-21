@@ -89,6 +89,15 @@ namespace Battlezeppelins.Models
             }
         }
 
+				public void removeZeppelins()
+				{
+					foreach (Zeppelin zeppelin in zeppelins.ToList())
+					{
+						List<Point> points = new List<Point>(this.openPoints);
+							zeppelins.Remove(zeppelin);
+					}
+				}
+
         public bool pointCollides(Point point)
         {
             foreach (Zeppelin zeppelin in zeppelins)
