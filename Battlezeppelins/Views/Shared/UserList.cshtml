@@ -1,9 +1,20 @@
 ﻿@model Battlezeppelins.Models.Data
 <h3>Player list</h3>
 <form id="BattleChallenge">
-    <select class="form-control" id="challengeeSelect" size="22" multiple></select>
+    <select class="form-control" id="challengeeSelect" size="20" multiple></select>
     <button type="button" class="btn btn-info btn-block" onclick="sendChallenge()">Challenge</button>
 </form>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p id="textData"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     function sendChallenge() {
         var e = document.getElementById("challengeeSelect");
@@ -13,7 +24,9 @@
             url: "Challenge/BattleChallenge",
             data: { challengeeSelected: challengee },
             success: function (data) {
-                alert(data);
+              $('#myModal').modal('show');
+              $('#textData').replaceWith(data);
+              setTimeout(function () { $('#myModal').modal('hide'); }, 2000);
             }
         });
     };
@@ -26,7 +39,6 @@
           $('#challengeeSelect').empty();
           $.each(data, function (i, player) {
             $('#challengeeSelect').append('<option>' + player + '</option>');
-            console.log(player);
           });
         }
       });

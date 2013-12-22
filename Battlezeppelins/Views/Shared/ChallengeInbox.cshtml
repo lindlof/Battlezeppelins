@@ -1,7 +1,13 @@
-﻿<div id="challengeInbox" style="display: none;">
-    <p id="challengeText"></p>
-    <input type="button" onclick="acceptChallenge()" value="Accept" />
-    <input type="button" onclick="rejectChallenge()" value="Reject" />
+﻿<div id="challengeInbox" style="display: none; padding-top:10px;">
+  <div class="panel panel-default">
+    <div style="padding:10px;">
+      <span class="label label-info" id="challengeText"></span>
+    </div>
+    <div class="btn-group btn-group-justified">
+      <a type="button" class="btn btn-info" onclick="acceptChallenge()" value="Accept">Accept</a>
+      <a type="button" class="btn btn-warning" onclick="rejectChallenge()" value="Reject">Reject</a>
+    </div>
+  </div>
 </div>
 <script>
     function pollChallengeInbox() {
