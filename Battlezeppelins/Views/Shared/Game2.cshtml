@@ -69,8 +69,9 @@
 </div>
 
 <script>
-	var playing = false;
+	var gamePhase = false;
 	var rotation = 2;
+	var lastTurn = false;
 
   function Ship(size, name) {
     this.id = name;
@@ -189,6 +190,7 @@
       toGamePhase();
   });
   function toGamePhase() {
+  	  gamePhase = true;
       $("#placement").hide();
       $("#opponentTable").show({ effect: 'drop', direction: "up", mode: 'slow', duration: 2000 });
       $("#gameTable").removeClass("game").addClass("gameOwn");
@@ -229,13 +231,9 @@
       var div = document.getElementById("game");
       var text = document.getElementById("opponent");
       if (data.playing) {
-      	playing = true;
-
       	text.textContent = "Playing with " + data.opponent;
       	div.style.display = "inline-block";
       } else {
-      	playing = false;
-
       	if (data.opponent) {
       		var result = (data.gameState == "YOU_WIN") ? "win" : "lose";
       		text.textContent = "You " + result + " against " + data.opponent;
@@ -290,31 +288,38 @@
   constructGame();
 
   function pollTurnData() {
-  	if (playing) {
+  	if (gamePhase) {
   		$.getJSON('@Url.Content("~/Game/GetTurn")', function (data) {
-  			if (data.turn != data.lastOpen.hit) {
-					// Opponent opened the last time
-  				var slot = $("#owngameTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
-  				slot.addClass("usedSlot");
-  				if (data.lastOpen.hit)
-  					slot.addClass("hitSlot");
-  			} else {
-  				// You opened the last time
-  				var slot = $("#opponentTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
-  				if (data.lastOpen.hit)
-  					slot.addClass("hitSlot");
-  			}
+  			if (data != null) {
+  				if (data.lastOpen != null) {
+  					if (data.turn != data.lastOpen.hit) {
+  						// Opponent opened the last time
+  						var slot = $("#owngameTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
+  						slot.addClass("usedSlot");
+  						if (data.lastOpen.hit)
+  							slot.addClass("hitSlot");
+  					} else {
+  						// You opened the last time
+  						var slot = $("#opponentTable button[id^='" + data.lastOpen.x + "," + data.lastOpen.y + "']");
+  						if (data.lastOpen.hit)
+  							slot.addClass("hitSlot");
+  					}
+  				}
 
-  			var btns = $('#opponentTable button');
-  			if (!data.turn) {
-  				btns.attr('disabled', true).fadeTo('slow', 0.6);
-  			} else {
-  				btns.attr('disabled', false).fadeTo('fast', 1.0);
+  				if (data.turn != lastTurn) {
+  					lastTurn = data.turn;
+  					var btns = $('#opponentTable button');
+  					if (!data.turn) {
+  						btns.attr('disabled', true).fadeTo('slow', 0.6);
+  					} else {
+  						btns.attr('disabled', false).fadeTo('fast', 1.0);
+  					}
+  				}
   			}
   		});
   	}
 	}
-	window.setInterval(pollTurnData, 100);
+	window.setInterval(pollTurnData, 200);
 	pollTurnData();
 
   function surrenderGame() {
