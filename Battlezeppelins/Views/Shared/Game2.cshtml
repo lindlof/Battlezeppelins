@@ -332,4 +332,35 @@
     });
   }
 
+  $(document).keydown(function (e) {
+    if (e.which == 37) { // left arrow
+      if ($('#rotation3').hasClass("btn-success"))
+        return;
+      $("button[id^='rotation']").removeClass("btn-success");
+      $('#rotation3').addClass("btn-success");
+      rotation = 3;
+    }
+    if (e.which == 38) { // up arrow
+      if ($('#rotation1').hasClass("btn-success"))
+        return;
+      $("button[id^='rotation']").removeClass("btn-success");
+      $('#rotation1').addClass("btn-success");
+      rotation = 1;
+    }
+    if (e.which == 39) { // right arrow
+      if ($('#rotation4').hasClass("btn-success"))
+        return;
+      $("button[id^='rotation']").removeClass("btn-success");
+      $('#rotation4').addClass("btn-success");
+      rotation = 4;
+    }
+    if (e.which == 40) { // down arrow
+      if ($('#rotation2').hasClass("btn-success"))
+        return;
+      $("button[id^='rotation']").removeClass("btn-success");
+      $('#rotation2').addClass("btn-success");
+      rotation = 2;
+    }
+  });
+
 </script>
