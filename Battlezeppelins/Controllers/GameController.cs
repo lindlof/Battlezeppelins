@@ -91,7 +91,8 @@ namespace Battlezeppelins.Controllers
             lock (player)
             {
                 Game game = Game.GetCurrentInstance(player);
-                success = game.Open(point);
+								if (game != null)
+									success = game.Open(point);
             }
 
             return Json(success, JsonRequestBehavior.AllowGet);
@@ -113,7 +114,7 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult GetTurn()
         {
-            Game game = Game.GetCurrentInstance(base.GetPlayer());
+            Game game = Game.GetLatestInstance(base.GetPlayer());
 						TurnData turn = null;
 					  if (game != null) turn = game.GetTurnData();
             return Json(turn, JsonRequestBehavior.AllowGet);
