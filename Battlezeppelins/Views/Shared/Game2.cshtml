@@ -35,14 +35,16 @@
 
   <div class="col-xs-4">
     <div class="row" id="game" style="display: none;">
-      <div class="col-xs-8">
-        <h4 class="text-primary" id="opponent"></h4> 
-      </div>
-      <div class="col-xs-4">
-        <button type="button" class="btn btn-danger" onclick="surrenderGame()">Surrender</button>
+      <div class="col-xs-12">
+        <div class="row" style="margin: 0 auto;">
+            <h4 class="text-primary" id="opponent"></h4> 
+        </div>
+        <div class="row">
+          <button type="button" class="btn btn-block btn-danger" onclick="surrenderGame()">Surrender</button>
+        </div>
       </div>
     </div>
-    <div id="placement">
+    <div id="placement" style="padding-top:10px">
       <div class="row">
         <div class="btn-group btn-group-justified">
           <a type="button" class="btn btn-success" id="continue" disabled="true">Continue</a>
@@ -232,7 +234,7 @@
       var text = document.getElementById("opponent");
       if (data.playing) {
       	text.textContent = "Playing with " + data.opponent;
-      	div.style.display = "inline-block";
+      	div.style.display = "";
       } else {
       	if (data.opponent) {
       		var result = (data.gameState == "YOU_WIN") ? "win" : "lose";
@@ -243,7 +245,7 @@
       		else if (data.stateReason == "INACTIVITY")
       			text.textContent += " (inactivity)";
 
-      		div.style.display = "inline-block";
+      		div.style.display = "";
       	} else {
       		div.style.display = "none";
       	}
