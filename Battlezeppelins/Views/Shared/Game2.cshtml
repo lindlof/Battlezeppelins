@@ -49,10 +49,10 @@
           <a type="button" class="btn btn-danger" id="reset" onclick="ships.reset()">Reset</a>
         </div>
         <div class="btn-group" style="padding-top:10px">
-          <button type="button" class="btn btn-default" id="rotation1" value="Up">Up</button>
-          <button type="button" class="btn btn-default" id="rotation2" value="Down">Down</button>
-          <button type="button" class="btn btn-default" id="rotation3" value="Right">Right</button>
-          <button type="button" class="btn btn-default" id="rotation4" value="Left">Left</button>
+          <button type="button" class="btn btn-default" id="rotation1" value="Up" onclick="rotation = 1">Up</button>
+          <button type="button" class="btn btn-default" id="rotation2" value="Down" onclick="rotation = 2">Down</button>
+					<button type="button" class="btn btn-default" id="rotation3" value="Left" onclick="rotation = 3">Left</button>
+          <button type="button" class="btn btn-default" id="rotation4" value="Right" onclick="rotation = 4">Right</button>
         </div>
       </div>
       <div class="row" style="padding-top:10px;">
@@ -70,6 +70,7 @@
 
 <script>
 	var playing = false;
+	var rotation = 2;
 
   function Ship(size, name) {
     this.id = name;
@@ -81,14 +82,21 @@
     this.rotation;
 
     this.place = function (x,y) {
-        this.x = x;
-        this.y = y;
+    		this.rotation = rotation;
+    		this.x = (this.rotation == 3) ? x - this.size + 1 : x;
+    		this.y = (this.rotation == 1) ? y - this.size + 1 : y;
 
         var draggable = document.getElementById(this.id);
         draggable.parentNode.removeChild(draggable);
 
         for (var i = 0; i < this.size; i++) {
-          $("#gameTable button[id^='" + this.x + "," + (i + parseInt(this.y)) + "']").text(this.sname);
+        	var xMod = 0;
+        	var yMod = 0;
+        	if (this.rotation == 1)      yMod = i;
+        	else if (this.rotation == 2) yMod = i;
+        	else if (this.rotation == 3) xMod = i;
+        	else if (this.rotation == 4) xMod = i;
+        	$("#gameTable button[id^='" + (parseInt(this.x) + xMod) + "," + (parseInt(this.y) + yMod) + "']").text(this.sname);
         }
 
         if (ships.allSet())
@@ -101,8 +109,10 @@
         type: "POST",
         url: '@Url.Content("~/Game/AddZeppelin")',
         data: {
-          type: ship.name,x: ship.x, y: ship.y,
-          rotDown: true
+        	type: ship.name,
+        	x: ship.x,
+        	y: ship.y,
+        	rotDown: (ship.rotation == 1 || ship.rotation == 2)
         }
       });
     };
