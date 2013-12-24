@@ -73,7 +73,7 @@
 <script>
 	var gamePhase = false;
 	var rotation = 2;
-	var lastTurn = false;
+	var lastTurn = undefined;
 
   function Ship(size, name) {
     this.id = name;
@@ -308,7 +308,7 @@
   					}
   				}
 
-  				if (data.turn != lastTurn) {
+  				if (lastTurn == undefined || data.turn != lastTurn) {
   					lastTurn = data.turn;
   					var btns = $('#opponentTable button');
   					if (!data.turn) {
