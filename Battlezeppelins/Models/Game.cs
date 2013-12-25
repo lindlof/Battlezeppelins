@@ -86,13 +86,13 @@ namespace Battlezeppelins.Models
                                     int stateReason = reader.GetInt32(ordinalReason);
                                     game.stateReason = (StateReason)stateReason;
                                 }
-                            }
 
-                            if (inactivity > 120)
-                            {
-                                TurnData turnData = game.GetTurnData();
-                                GameState newState = (turnData.turn) ? game.opponent.getWinState() : game.player.getWinState();
-                                game.SetState(newState, StateReason.INACTIVITY);
+																if (inactivity > 120 && !game.GameEnded())
+																{
+																	TurnData turnData = game.GetTurnData();
+																	GameState newState = (turnData.turn) ? game.opponent.getWinState() : game.player.getWinState();
+																	game.SetState(newState, StateReason.INACTIVITY);
+																}
                             }
                         }
                     }
@@ -147,6 +147,12 @@ namespace Battlezeppelins.Models
                 }
             }
         }
+
+				public bool GameEnded()
+				{
+					return gameState == GameState.CHALLENGER_WON ||
+								 gameState == GameState.CHALLENGEE_WON;
+				}
 
         public static void CheckGameState(Player challenger, Player challengee)
         {
