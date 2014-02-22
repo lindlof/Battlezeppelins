@@ -15,6 +15,9 @@ namespace Battlezeppelins
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
                         "~/Scripts/jquery-ui-{version}.js"));
 
+			bundles.Add(new ScriptBundle("~/bundles/jqueryui-touch-punch").Include(
+						"~/Scripts/jquery.ui.touch-punch.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",
                         "~/Scripts/jquery.validate*"));

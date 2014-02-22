@@ -24,9 +24,12 @@
         <h4>You need a name</h4><br />
         <p style="color:#E52E2E">@ViewBag.Error</p>
         <form action="Home" method="post">
-            Name: <input type="text" name="registrationName" />
+            Name: <input type="text" id="registrationName" name="registrationName" autofocus />
             <input type="submit" value="Register" />
         </form>
+				<script>
+					$("#registrationName").focus();
+				</script>	
     } else {
         <div class="row">
           <div class="col-xs-9">
