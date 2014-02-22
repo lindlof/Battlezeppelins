@@ -9,7 +9,7 @@
         @Scripts.Render("~/bundles/modernizr")
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/bundles/jqueryui")
-        @Scripts.Render("~/Scripts/bootstrap.min.js")
+				@Scripts.Render("~/bundles/bootstrap")
 
         <script>
           var poller = window.setInterval(function () {
@@ -99,21 +99,35 @@
     </head>
     <body>
         <header>
+            <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+							<div class="container">
+								@{var navClass = new { @class = "navbar-brand" };}
+								@Html.ActionLink("Battlezeppelins", "Index", "Home", navClass)
 
-            <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-              <ul class="nav nav-pills" style="padding-left:50px;margin-top:20px;margin-bottom:10px;">
-                <li>@Html.ActionLink("your logo here", "Index", "Home")</li>
-                <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                <li>@Html.ActionLink("About", "About", "Home")</li>
-                <li>@Html.ActionLink("Game", "Game","Home")</li>
-                <div class="pull-right" style="padding-right:10px">
-                  <button type="button" class="btn btn-default btn-lg">
-                    <span class="glyphicon glyphicon-hand-right"></span>
-                    @DateTime.Now.Year - <a href="https://github.com/Mikuz/Battlezeppelins">Battlezeppelins</a>
-                  </button>
-                </div>
-              </ul>
-            </nav>
+								<button class="navbar-toggle" data-toggle="collapse" data-target=".navHeaderCollapse">
+									<span class="icon-bar"></span>
+									<span class="icon-bar"></span>
+									<span class="icon-bar"></span>
+								</button>
+								
+								<div class="collapse navbar-collapse navHeaderCollapse">
+									<ul class ="nav navbar-nav navbar-right">
+										<li>@Html.ActionLink("Home", "Index", "Home", navClass)</li>
+										<li>@Html.ActionLink("About", "About", "Home", navClass)</li>
+										<li>@Html.ActionLink("Game", "Game","Home", navClass)</li>
+										<li class="dropdown">
+											<a href="#" class ="dropdown-toggle navbar-brand" data-toggle="dropdown">
+												Contribute <b class="caret"></b>
+											</a>
+											<ul class ="dropdown-menu">
+												<li><a href="https://github.com/Mikuz/Battlezeppelins" class="navbar-brand">Code</a></li>
+												<li><a href="https://github.com/Mikuz/Battlezeppelins/issues" class="navbar-brand">Issues</a></li>
+												<li><a href="https://github.com/Mikuz/Battlezeppelins/fork" class="navbar-brand">Fork</a></li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+            </div>
         </header>
         <div id="body" class="container well" style="padding-top: 70px;">
             @RenderSection("featured", required: false)
