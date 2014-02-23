@@ -1,6 +1,6 @@
-﻿<div id="msgBox" style="height:436px; overflow: hidden;padding-left: 15px;padding-right: 15px;"></div>
+﻿<div id="msgBox" style="height:436px; overflow: auto;padding-left: 15px;padding-right: 15px;"></div>
 
-<div class="row well" style="margin-top:10px;">
+<div class="row well" style="margin-top:10px; margin-bottom:5px; ">
   <div class="col-xs-2">
     <button class="btn btn-info" onclick="sendMessage()"><b>Send</b></button>
   </div>
@@ -21,7 +21,7 @@
   function askMessages() {
     $.ajax({
       type: "POST",
-      url: "Chat/GetMessages",
+      url: "@Url.Action("GetMessages", "Chat")",
       data: { fromId: lastId },
       success: function (data) {
         if (data.length == 0)
@@ -44,7 +44,7 @@
       return;
     $.ajax({
       type: "POST",
-      url: "Chat/SendMessage",
+      url: "@Url.Action("SendMessage", "Chat")",
       data: { message: $("#message").val()},
       success: function (data) {
         $("#message").val('');
