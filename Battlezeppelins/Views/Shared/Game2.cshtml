@@ -1,85 +1,86 @@
 ﻿@model Battlezeppelins.Models.Data
 
-<div class="row" style="padding-top:20px;">
-  <div class="col-xs-8">
-    <div class="gameEnemy" id="opponentTable" style="z-index:100">
-      <table class="table table-bordered">
-        @for(var y = 0; y < 10; y++){
-        <tr>
-          @for(var x = 0; x < 10; x++){
-            <td style="padding:0px;">
-              <button type="button" id="@x,@y" class="btn btn-info"></button>
-            </td>
-          }
-        </tr>
-        }
-      </table>
-    </div>
-
-    <div class="game" id="gameTable">
-      <div class="" id="owngameTable">
-        <table class="table table-bordered">
-          @for(var y = 0; y < 10; y++){
-          <tr style="padding:0px">
-            @for(var x = 0; x < 10; x++){
-              <td style="padding:0px;padding-bottom:2px">
-                <button type="button" id="@x,@y" class="btn btn-info"></button>
-              </td>
-            }
-          </tr>
-          }
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-xs-4">
-    <div class="row" id="game" style="display: none;">
-      <div class="col-xs-12">
-        <div class="row" style="margin: 0 auto;">
-            <h4 class="text-primary" id="opponent"></h4> 
-        </div>
-        <div class="row">
-          <button type="button" class="btn btn-block btn-danger" onclick="surrenderGame()">Surrender</button>
-        </div>
-      </div>
-    </div>
-    <div id="placement" style="padding-top:10px">
-      <div class="row">
-        <div class="btn-group btn-group-justified">
-          <a type="button" class="btn btn-success" id="continue" disabled="true">Continue</a>
-          <a type="button" class="btn btn-danger" id="reset" onclick="ships.reset()">Reset</a>
-        </div>
-				<div class="btn-group" style="padding-top:10px">
-					<button type="button" class="btn btn-default btn-success" id="rotation1" value="Down" onclick="rotation = 1">Horizontal</button>
-					<button type="button" class="btn btn-default" id="rotation2" value="Right" onclick="rotation = 2">Vertical</button>
-				</div>
-      </div>
-      <div class="row" style="padding-top:10px;">
-				<div class="panel panel-primary">
-					<div class="panel-heading">
-						<h3 class="panel-title">Ships</h3>
-					</div>
-					<div id="drag" class="panel-body">
-						@foreach (var item in Model.zeppelinType)
-						{
-							var length = item.length * 40 + "px";
-							<div class="well well-sm draggableShip" style="width:@length;cursor: pointer;" id="@item.name">@item.name</div>
+<div class="container">
+	<div class="row">
+		<div class="col-sm-7" id="gameColumn">
+			<div class="gameEnemy" id="opponentTable" style="z-index:100">
+				<table class="table table-bordered">
+					@for(var y = 0; y < 10; y++){
+					<tr>
+						@for(var x = 0; x < 10; x++){
+							<td style="padding:0px;">
+								<button type="button" id="@x,@y" class="btn btn-info"></button>
+							</td>
 						}
+					</tr>
+					}
+				</table>
+			</div>
+
+			<div class="game" id="gameTable">
+				<div class="" id="owngameTable">
+					<table class="table table-bordered">
+						@for(var y = 0; y < 10; y++){
+						<tr style="padding:0px">
+							@for(var x = 0; x < 10; x++){
+								<td style="padding:0px;padding-bottom:2px">
+									<button type="button" id="@x,@y" class="btn btn-info"></button>
+								</td>
+							}
+						</tr>
+						}
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-4" id="controlColumn">
+			<div class="row" id="game" style="display: none;">
+				<div class="col-xs-12">
+					<div class="row" style="margin: 0 auto;">
+							<h4 class="text-primary" id="opponent"></h4> 
+					</div>
+					<div class="row">
+						<button type="button" class="btn btn-block btn-danger" onclick="surrenderGame()">Surrender</button>
 					</div>
 				</div>
-				<div class="panel panel-info">
-					<div class="panel-heading">
-						<h3 class="panel-title">Help</h3>
-					</div>
-					<div class="panel-body">
-						<p>Drag all ships to the board horizontally or vertically.</p>
-						<p>When done press continue.</p>
+			</div>
+			<div id="placement" style="padding-top:10px">
+				<div class="row">
+					<div class="btn-group btn-group-justified">
+						<a type="button" class="btn btn-success" id="continue" disabled="true">Continue</a>
+						<a type="button" class="btn btn-danger" id="reset" onclick="ships.reset()">Reset</a>
 					</div>
 				</div>
-      </div>
-    </div>
-  </div>
+				<div class="row" style="padding-top:10px;">
+					<div class="panel panel-primary">
+						<div class="panel-heading text-center">
+							<div class="btn-group">
+								<button type="button" class="btn btn-default btn-success" id="rotation1" value="Down" onclick="rotation = 1">Horizontal</button>
+								<button type="button" class="btn btn-default" id="rotation2" value="Right" onclick="rotation = 2">Vertical</button>
+							</div>
+						</div>
+						<div id="drag" class="panel-body">
+							@foreach (var item in Model.zeppelinType)
+							{
+								var length = item.length * 40 + "px";
+								<div class="well well-sm draggableShip" style="width:@length;cursor: pointer;" id="@item.name">@item.name</div>
+							}
+						</div>
+					</div>
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">Help</h3>
+						</div>
+						<div class="panel-body">
+							<p>Drag all ships to the board horizontally or vertically.</p>
+							<p>When done press continue.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
@@ -235,7 +236,20 @@
       $("#gameTable").removeClass("game").addClass("gameOwn");
       $("#owngameTable").addClass("gameOwn2");
       $("#gameTable button").attr("disabled", true);
+
+      $("#body").css({
+      	"min-width": "780px"
+      });
+      $("#gameColumn").css({
+      		"padding-left": "8%",
+      		"max-height": "750px" });
+      $("#gameColumn").removeClass("col-sm-7").addClass("col-lg-8");
+      $("#controlColumn").removeClass("col-sm-4").addClass("col-lg-3");
   }
+
+  $("#body").css({
+  	"min-width": "450px"
+  });
 
 
   $(function () {
