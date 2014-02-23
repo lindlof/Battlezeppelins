@@ -15,7 +15,7 @@ namespace Battlezeppelins.Controllers
         public ActionResult BattleChallenge()
         {
             string message = "";
-            Player challenger = base.GetPlayer();
+			Player challenger = base.player;
             Player challengee = null;
 
             string challengeeName = Request.Form["challengeeSelected"];
@@ -53,7 +53,7 @@ namespace Battlezeppelins.Controllers
         /// <returns></returns>
         public ActionResult BattleAnswer()
         {
-            Player challengee = base.GetPlayer();
+			Player challengee = base.player;
             string playerAcceptsStr = Request.Form["PlayerAccepts"];
             bool playerAccepts = Boolean.Parse(playerAcceptsStr);
             Player challenger = Challenge.RetrieveChallenge(challengee);

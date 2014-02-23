@@ -27,9 +27,27 @@
               $('#myModal').modal('show');
               $('#textData').replaceWith(data);
               setTimeout(function () { $('#myModal').modal('hide'); }, 2000);
+
+              localStorage.setItem("challengeWaiting", "true");
+              challengeResponse();
             }
         });
     };
+
+    function challengeResponse() {
+    	var challengeWaiting = localStorage.getItem("challengeWaiting");
+    	if (challengeWaiting == "true") {
+    		$.getJSON('@Url.Content("~/Game/Metadata")', function (data) {
+    			if (data.playing) {
+    				localStorage.setItem("challengeWaiting", "false");
+    				window.location.href = "@Url.Action("Game", "Home")";
+    			}
+    		});
+    		setTimeout(challengeResponse, 1000);
+    	}
+    }
+    challengeResponse();
+
     function asdWhosOnline() {
       $.ajax({
         type: "POST",

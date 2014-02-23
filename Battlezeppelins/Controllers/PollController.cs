@@ -13,7 +13,7 @@ namespace Battlezeppelins.Controllers
         {
             if (Request.Cookies["userInfo"] != null)
             {
-                Player player = base.GetPlayer();
+                Player player = base.player;
                 player.StatusUpdate();
                 return Json(true, JsonRequestBehavior.AllowGet);
             }
@@ -25,7 +25,7 @@ namespace Battlezeppelins.Controllers
         {
             if (Request.Cookies["userInfo"] != null)
             {
-                Player player = base.GetPlayer();
+				Player player = base.player;
                 Player challenger = Challenge.RetrieveChallenge(player);
 
                 if (challenger != null)

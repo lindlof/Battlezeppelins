@@ -39,7 +39,10 @@
             url: "Challenge/BattleAnswer",
             data: { PlayerAccepts: accepted },
             success: function (data) {
-                pollChallengeInbox();
+            	if (accepted) {
+            		window.location.href = "@Url.Action("Game", "Home")";
+            	}
+              pollChallengeInbox();
             }
         });
     }

@@ -11,7 +11,27 @@ namespace Battlezeppelins.Controllers
     {
         private static Dictionary<int, Player> players = new Dictionary<int, Player>();
 
-        public Player GetPlayer()
+		private BaseData baseData;
+		public Player player { get; private set; }
+
+		protected override void OnActionExecuting(ActionExecutingContext aec)
+		{
+			base.OnActionExecuting(aec);
+			baseData = new BaseData();
+			GetPlayer();
+
+			baseData.navigationShowGame = (Game.GetCurrentInstance(player) != null);
+
+			ViewData["BaseData"] = baseData;
+		}
+
+		public Player GetPlayer()
+		{
+			this.player = GetLocalPlayer();
+			return this.player;
+		}
+
+        private Player GetLocalPlayer()
         {
             if (Request.Cookies["userInfo"] != null)
             {

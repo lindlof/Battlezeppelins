@@ -172,6 +172,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BaseData.cs" />
     <Compile Include="Models\Challenge.cs" />
     <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\Game.cs" />
@@ -260,7 +261,7 @@
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.js" />
     <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
-	<Content Include="Scripts\jquery.ui.touch-punch.js" />
+    <Content Include="Scripts\jquery.ui.touch-punch.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />

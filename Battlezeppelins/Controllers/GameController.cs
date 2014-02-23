@@ -20,7 +20,7 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult Metadata()
         {
-            Player player = base.GetPlayer();
+            Player player = base.player;
             Game game = Game.GetCurrentInstance(player);
 
             MetadataResult metadata = new MetadataResult();
@@ -45,7 +45,7 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult Surrender()
         {
-            Player player = base.GetPlayer();
+            Player player = base.player;
             Game game = Game.GetCurrentInstance(player);
 
             if (game != null)
@@ -67,7 +67,7 @@ namespace Battlezeppelins.Controllers
             int y = Int32.Parse(Request.Form["y"]);
             bool rotDown = Boolean.Parse(Request.Form["rotDown"]);
 
-            Player player = base.GetPlayer();
+            Player player = base.player;
             Zeppelin zeppelin = new Zeppelin(type, new Point(x, y), rotDown);
 
             bool zeppelinAdded;
@@ -87,7 +87,7 @@ namespace Battlezeppelins.Controllers
             Point point = new Point(x, y);
             bool success = false;
 
-            Player player = base.GetPlayer();
+            Player player = base.player;
             lock (player)
             {
                 Game game = Game.GetCurrentInstance(player);
@@ -100,21 +100,21 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult GetPlayerTable()
         {
-            Game game = Game.GetCurrentInstance(base.GetPlayer());
+            Game game = Game.GetCurrentInstance(base.player);
             GameTable table = (game != null) ? game.GetPlayerTable() : null;
             return Json(table, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetOpponentTable()
         {
-            Game game = Game.GetCurrentInstance(base.GetPlayer());
+            Game game = Game.GetCurrentInstance(base.player);
             GameTable table = (game != null) ? game.GetOpponentTable() : null;
             return Json(table, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetTurn()
         {
-            Game game = Game.GetLatestInstance(base.GetPlayer());
+            Game game = Game.GetLatestInstance(base.player);
 						TurnData turn = null;
 					  if (game != null) turn = game.GetTurnData();
             return Json(turn, JsonRequestBehavior.AllowGet);

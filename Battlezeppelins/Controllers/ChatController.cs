@@ -12,7 +12,7 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult SendMessage()
         {
-            Player player = base.GetPlayer();
+            Player player = base.player;
             string message = Request.Form["message"];
 
             Chat.sendMessage(player, message);

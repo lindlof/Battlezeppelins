@@ -21,7 +21,7 @@ namespace Battlezeppelins.Controllers
                 Register(registrationName);
             }
 
-            Player player = base.GetPlayer();
+			Player player = base.GetPlayer();
 
             if (player == null)
             {
@@ -73,7 +73,7 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult Game()
         {
-            Data playerData = new Data(base.GetPlayer());
+            Data playerData = new Data(base.player);
 
             return View(playerData);
         }

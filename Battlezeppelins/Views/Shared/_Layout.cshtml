@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+	var baseData = (Battlezeppelins.Models.BaseData)ViewData["BaseData"];
+	var navigationShowGame = baseData.navigationShowGame;	
+}
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -115,8 +119,12 @@
 								<div class="collapse navbar-collapse navHeaderCollapse">
 									<ul class ="nav navbar-nav navbar-right">
 										<li>@Html.ActionLink("Home", "Index", "Home", navClass)</li>
+
+										@if (navigationShowGame) {
+											<li>@Html.ActionLink("Game", "Game", "Home", new { @class = "navbar-brand", @style = "color:#f0ad4e;" })</li>
+										}
+
 										<li>@Html.ActionLink("About", "About", "Home", navClass)</li>
-										<li>@Html.ActionLink("Game", "Game","Home", navClass)</li>
 										<li class="dropdown">
 											<a href="#" class ="dropdown-toggle navbar-brand" data-toggle="dropdown">
 												Contribute <b class="caret"></b>
