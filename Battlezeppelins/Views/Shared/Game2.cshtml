@@ -64,7 +64,7 @@
 						@foreach (var item in Model.zeppelinType)
 						{
 							var length = item.length * 40 + "px";
-							<div class="well well-sm draggableShip" style="width:@length;" id="@item.name">@item.name</div>
+							<div class="well well-sm draggableShip" style="width:@length;cursor: pointer;" id="@item.name">@item.name</div>
 						}
 					</div>
 				</div>
@@ -156,8 +156,8 @@
       $.each(this.list, function (i, ship) {
         for (var i = 0; i < ship.ship.size; i++)
           $("#gameTable  button[id^='" + ship.ship.x + "," + (i + parseInt(ship.ship.y)) + "']").text('');
-        ship.ship.x = "undefined";
-        ship.ship.y = "undefined";
+        ship.ship.x = undefined;
+        ship.ship.y = undefined;
       });
       this.changeShipRotation();
     }
@@ -167,12 +167,12 @@
     		if (ship.ship.x == undefined || ship.ship.y == undefined) {
 
     			$("#drag").append('<div class="well well-sm draggableShip" style="width:' +
-															ship.ship.size * 40 + 'px;" id="' + ship.ship.name +
+															ship.ship.size * 40 + 'px;cursor: pointer;" id="' + ship.ship.name +
 															'">' + ship.ship.name + '</div>');
 
     			$("#drag div").draggable({
     				appendTo: "body",
-    				cursorAt: { top: 0, left: 0 }
+    				cursorAt: { top: 20, left: 20 }
     			});
 
     			if (rotation == 2) {
@@ -241,7 +241,7 @@
   $(function () {
     $("#drag div").draggable({
       appendTo: "body",
-      cursorAt: { top: 0, left: 0 }
+      cursorAt: { top: 20, left: 20 }
     });
     $("#gameTable button").droppable({
       tolerance: "pointer",
