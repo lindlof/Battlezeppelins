@@ -51,8 +51,8 @@
           <a type="button" class="btn btn-danger" id="reset" onclick="ships.reset()">Reset</a>
         </div>
 				<div class="btn-group" style="padding-top:10px">
-					<button type="button" class="btn btn-default btn-success" id="rotation2" value="Down" onclick="rotation = 2">Vertical</button>
-					<button type="button" class="btn btn-default" id="rotation4" value="Right" onclick="rotation = 4">Horizontal</button>
+					<button type="button" class="btn btn-default btn-success" id="rotation1" value="Down" onclick="rotation = 1">Horizontal</button>
+					<button type="button" class="btn btn-default" id="rotation2" value="Right" onclick="rotation = 2">Vertical</button>
 				</div>
       </div>
       <div class="row" style="padding-top:10px;">
@@ -64,7 +64,7 @@
 						@foreach (var item in Model.zeppelinType)
 						{
 							var length = item.length * 40 + "px";
-							<div class="well well-sm" style="width:@length;" id="@item.name">@item.name</div>
+							<div class="well well-sm draggableShip" style="width:@length;" id="@item.name">@item.name</div>
 						}
 					</div>
 				</div>
@@ -73,7 +73,7 @@
 						<h3 class="panel-title">Help</h3>
 					</div>
 					<div class="panel-body">
-						<p>Drag all ships to the board vertically or horizontally.</p>
+						<p>Drag all ships to the board horizontally or vertically.</p>
 						<p>When done press continue.</p>
 					</div>
 				</div>
@@ -84,7 +84,7 @@
 
 <script>
 	var gamePhase = false;
-	var rotation = 2;
+	var rotation = 1;
 	var lastTurn = undefined;
 
   function Ship(size, name) {
@@ -97,25 +97,23 @@
     this.rotation;
 
     this.place = function (x,y) {
-    		this.rotation = rotation;
-    		this.x = (this.rotation == 3) ? x - this.size + 1 : x;
-    		this.y = (this.rotation == 1) ? y - this.size + 1 : y;
+    	this.rotation = rotation;
+    	this.x = x;
+    	this.y = y;
 
-        var draggable = document.getElementById(this.id);
-        draggable.parentNode.removeChild(draggable);
+      var draggable = document.getElementById(this.id);
+      draggable.parentNode.removeChild(draggable);
 
-        for (var i = 0; i < this.size; i++) {
-        	var xMod = 0;
-        	var yMod = 0;
-        	if (this.rotation == 1)      yMod = i;
-        	else if (this.rotation == 2) yMod = i;
-        	else if (this.rotation == 3) xMod = i;
-        	else if (this.rotation == 4) xMod = i;
-        	$("#gameTable button[id^='" + (parseInt(this.x) + xMod) + "," + (parseInt(this.y) + yMod) + "']").text(this.sname);
-        }
+      for (var i = 0; i < this.size; i++) {
+        var xMod = 0;
+        var yMod = 0;
+        if (this.rotation == 1) xMod = i;
+        else if (this.rotation == 2) yMod = i;
+        $("#gameTable button[id^='" + (parseInt(this.x) + xMod) + "," + (parseInt(this.y) + yMod) + "']").text(this.sname);
+      }
 
-        if (ships.allSet())
-          $("#continue").attr("disabled", false);
+      if (ships.allSet())
+        $("#continue").attr("disabled", false);
     };
 
     this.safe = function () {
@@ -127,7 +125,7 @@
         	type: ship.name,
         	x: ship.x,
         	y: ship.y,
-        	rotDown: (ship.rotation == 1 || ship.rotation == 2)
+        	rotDown: (ship.rotation == 2)
         }
       });
     };
@@ -155,20 +153,47 @@
     }
     this.reset = function () {
       $("#continue").attr("disabled", true);
-      $("#drag").empty();
       $.each(this.list, function (i, ship) {
         for (var i = 0; i < ship.ship.size; i++)
           $("#gameTable  button[id^='" + ship.ship.x + "," + (i + parseInt(ship.ship.y)) + "']").text('');
         ship.ship.x = "undefined";
         ship.ship.y = "undefined";
-        $("#drag").append('<div class="well well-sm" style="width:' +
-                          ship.ship.size * 40 + 'px;" id="' + ship.ship.name +
-                          '">' + ship.ship.name + '</div>');
-        $("#drag div").draggable({
-          appendTo: "body",
-          cursorAt: { top: 0, left: 0 }
-        });
       });
+      this.changeShipRotation();
+    }
+    this.changeShipRotation = function () {
+    	$("#drag").empty();
+    	$.each(this.list, function (i, ship) {
+    		if (ship.ship.x == undefined || ship.ship.y == undefined) {
+
+    			$("#drag").append('<div class="well well-sm draggableShip" style="width:' +
+															ship.ship.size * 40 + 'px;" id="' + ship.ship.name +
+															'">' + ship.ship.name + '</div>');
+
+    			$("#drag div").draggable({
+    				appendTo: "body",
+    				cursorAt: { top: 0, left: 0 }
+    			});
+
+    			if (rotation == 2) {
+    				var shipE = $("#" + ship.ship.name);
+
+    				shipE.css({
+    					"-webkit-transform-origin": "bottom left",
+    					"-moz-transform-origin": "bottom left",
+    					"-o-transform-origin": "bottom left",
+    					"transform-origin": "bottom left",
+    					WebkitTransform: 'rotate(90deg)',
+    					'-moz-transform': 'rotate(90deg)'
+    				});
+
+    				var dragTop = $("#drag").clientTop;
+
+    				shipE.css({ "top": -50 + "px" });
+    				shipE.css({ "left": i * 50 + "px" });
+    			}
+    		}
+    	});
     }
     this.safeAll = function () {
       $.each(this.list, function (i, ship) {
@@ -176,7 +201,7 @@
       });
     };
   };
-  var ships = new ShipList();
+	var ships = new ShipList();
 
   $("#opponentTable button").click(function () {
     var slot = $(this);
@@ -234,6 +259,8 @@
       return;
     $("button[id^='rotation']").removeClass("btn-success");
     $(this).addClass("btn-success");
+
+    ships.changeShipRotation();
   });
 
   $(document).ready(function () {
@@ -273,7 +300,8 @@
       url: '@Url.Content("~/Game/GetPlayerTable")',
       success: function (data) {
           $.each(data.zeppelins, function (i, zeppelin) {
-              var ship = ships.get(zeppelin.type.name);
+          		var ship = ships.get(zeppelin.type.name);
+          		rotation = zeppelin.rotDown ? rotation = 2 : rotation = 1;
               ship.place(zeppelin.location.x, zeppelin.location.y);
           });
           if (ships.allSet())
@@ -345,36 +373,5 @@
       }
     });
   }
-
-  $(document).keydown(function (e) {
-    if (e.which == 37) { // left arrow
-      if ($('#rotation3').hasClass("btn-success"))
-        return;
-      $("button[id^='rotation']").removeClass("btn-success");
-      $('#rotation3').addClass("btn-success");
-      rotation = 3;
-    }
-    if (e.which == 38) { // up arrow
-      if ($('#rotation1').hasClass("btn-success"))
-        return;
-      $("button[id^='rotation']").removeClass("btn-success");
-      $('#rotation1').addClass("btn-success");
-      rotation = 1;
-    }
-    if (e.which == 39) { // right arrow
-      if ($('#rotation4').hasClass("btn-success"))
-        return;
-      $("button[id^='rotation']").removeClass("btn-success");
-      $('#rotation4').addClass("btn-success");
-      rotation = 4;
-    }
-    if (e.which == 40) { // down arrow
-      if ($('#rotation2').hasClass("btn-success"))
-        return;
-      $("button[id^='rotation']").removeClass("btn-success");
-      $('#rotation2').addClass("btn-success");
-      rotation = 2;
-    }
-  });
 
 </script>
