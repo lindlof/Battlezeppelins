@@ -39,7 +39,6 @@
     	if (challengeWaiting == "true") {
     		$.getJSON('@Url.Content("~/Game/Metadata")', function (data) {
     			if (data.playing) {
-    				localStorage.setItem("challengeWaiting", "false");
     				window.location.href = "@Url.Action("Game", "Home")";
     			}
     		});
