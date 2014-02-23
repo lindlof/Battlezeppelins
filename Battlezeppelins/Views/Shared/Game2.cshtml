@@ -169,7 +169,7 @@
 
     			$("#drag").append('<div class="well well-sm draggableShip" style="width:' +
 															ship.ship.size * 40 + 'px;cursor: pointer;" id="' + ship.ship.name +
-															'">' + ship.ship.name + '</div>');
+															'" ondragstart="shipDragHandler(this)">' + ship.ship.name + '</div>');
 
     			$("#drag div").draggable({
     				appendTo: "body",
