@@ -64,7 +64,7 @@
 							@foreach (var item in Model.zeppelinType)
 							{
 								var length = item.length * 40 + "px";
-								<div class="well well-sm draggableShip" style="width:@length;cursor: pointer;" id="@item.name">@item.name</div>
+								<div class="well well-sm draggableShip" style="width:@length;cursor: pointer;" id="@item.name" ondragstart="shipDragHandler(this)">@item.name</div>
 							}
 						</div>
 					</div>
@@ -273,6 +273,10 @@
       }
     })
   });
+
+  function shipDragHandler(e) {
+  	$("html, body").animate({ scrollTop: 0 }, "slow");
+  }
 
   $("button[id^='rotation']").click(function () {
     if ($(this).hasClass("btn-success"))
