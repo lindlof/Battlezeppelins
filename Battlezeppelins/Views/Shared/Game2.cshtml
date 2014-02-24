@@ -74,6 +74,16 @@
 	</div>
 </div>
 
+<div class="modal fade" id="gameModal" tabindex="-1" role="dialog" aria-labelledby="gameModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p id="textData"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 	localStorage.setItem("challengeWaiting", "false");
 
@@ -316,6 +326,7 @@
       if (data.playing) {
       	text.textContent = "Playing with " + data.opponent;
       	div.style.display = "";
+      	localStorage.setItem("gameIsOn", "true");
       } else {
       	if (data.opponent) {
       		var result = (data.gameState == "YOU_WIN") ? "win" : "lose";
@@ -327,6 +338,13 @@
       			text.textContent += " (inactivity)";
 
       		div.style.display = "";
+
+      		if (localStorage.getItem("gameIsOn") == "true") {
+      			$('#gameModal').modal('show');
+      			$('#textData').replaceWith(text.textContent);
+      			setTimeout(function () { $('#gameModal').modal('hide'); }, 3000);
+      		}
+      		localStorage.setItem("gameIsOn", "false");
       	} else {
       		div.style.display = "none";
       	}
