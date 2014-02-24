@@ -95,6 +95,17 @@
     	this.x = x;
     	this.y = y;
 
+			// Check thay ship is placed in free group of slots.
+    	for (var i = 0; i < this.size; i++) {
+    		var xMod = 0;
+    		var yMod = 0;
+    		if (this.rotation == 1) xMod = i;
+    		else if (this.rotation == 2) yMod = i;
+    		var button = $("#gameTable button[id^='" + (parseInt(this.x) + xMod) + "," + (parseInt(this.y) + yMod) + "']");
+    		if (button.text() != "") return;
+    		if (button.length == 0) return;
+    	}
+
       var draggable = document.getElementById(this.id);
       draggable.parentNode.removeChild(draggable);
 
