@@ -100,14 +100,14 @@ namespace Battlezeppelins.Controllers
 
         public ActionResult GetPlayerTable()
         {
-            Game game = Game.GetCurrentInstance(base.player);
+			Game game = Game.GetLatestInstance(base.player);
             GameTable table = (game != null) ? game.GetPlayerTable() : null;
             return Json(table, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetOpponentTable()
         {
-            Game game = Game.GetCurrentInstance(base.player);
+            Game game = Game.GetLatestInstance(base.player);
             GameTable table = (game != null) ? game.GetOpponentTable() : null;
             return Json(table, JsonRequestBehavior.AllowGet);
         }
