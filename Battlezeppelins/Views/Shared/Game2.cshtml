@@ -148,8 +148,13 @@
     this.reset = function () {
       $("#continue").attr("disabled", true);
       $.each(this.list, function (i, ship) {
-        for (var i = 0; i < ship.ship.size; i++)
-          $("#gameTable  button[id^='" + ship.ship.x + "," + (i + parseInt(ship.ship.y)) + "']").text('');
+      	for (var i = 0; i < ship.ship.size; i++) {
+      		var xMod = 0;
+      		var yMod = 0;
+      		if (ship.ship.rotation == 1) xMod = i;
+      		else if (ship.ship.rotation == 2) yMod = i;
+      		$("#gameTable  button[id^='" + (parseInt(ship.ship.x) + xMod) + "," + (parseInt(ship.ship.y) + yMod) + "']").text('');
+      	}
         ship.ship.x = undefined;
         ship.ship.y = undefined;
       });
